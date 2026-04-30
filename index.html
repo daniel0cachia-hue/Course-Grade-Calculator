@@ -2664,7 +2664,7 @@
 
     .results-summary.results-summary--single {
       grid-template-columns: minmax(0, 1fr);
-      max-width: 760px;
+      max-width: none;
     }
 
     .result-card {
@@ -3606,6 +3606,18 @@
       height: 22px;
       color: #545454;
       flex: 0 0 auto;
+    }
+
+    .folder-open-icon {
+      display: none;
+    }
+
+    .folder-block.open > .folder-header .folder-closed-icon {
+      display: none;
+    }
+
+    .folder-block.open > .folder-header .folder-open-icon {
+      display: block;
     }
 
     .pass-modal-footer {
@@ -5133,7 +5145,9 @@
 
   <script>
     const DEFAULT_ACCENT = '#247cf4';
-    const FOLDER_ICON_SVG = `<svg class="course-folder-icon" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M1.8 4.4c0-.66.54-1.2 1.2-1.2H6.1l1.2 1.4H13c.66 0 1.2.54 1.2 1.2v5.8c0 .66-.54 1.2-1.2 1.2H3c-.66 0-1.2-.54-1.2-1.2V4.4Z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg>`;
+    const FOLDER_ICON_SVG = `<svg class="course-folder-icon folder-closed-icon" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M1.8 4.4c0-.66.54-1.2 1.2-1.2H6.1l1.2 1.4H13c.66 0 1.2.54 1.2 1.2v5.8c0 .66-.54 1.2-1.2 1.2H3c-.66 0-1.2-.54-1.2-1.2V4.4Z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg>`;
+    const OPEN_FOLDER_ICON_SVG = `<svg class="course-folder-icon folder-open-icon" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M1.7 6.1c.09-.57.58-1 1.16-1h3.08l1.15-1.35c.23-.27.56-.42.91-.42h4.9c.66 0 1.2.54 1.2 1.2v1.25" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/><path d="M1.95 6.55h10.8c.78 0 1.34.74 1.13 1.5l-1.03 3.75c-.14.52-.62.88-1.15.88H2.95c-.63 0-1.15-.49-1.19-1.12l-.25-3.75c-.05-.69.5-1.26 1.19-1.26Z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg>`;
+    const FOLDER_TOGGLE_ICON_SVG = FOLDER_ICON_SVG + OPEN_FOLDER_ICON_SVG;
 
     function openHelp() {
       const overlay = document.getElementById('help-overlay');
@@ -5258,8 +5272,36 @@
     let activeMoveDropdownId = null; // track open move dropdown
     let currentSavesMode = 'browse';
 
-    function getSaves()   { try { return JSON.parse(localStorage.getItem(SAVES_KEY))   || []; } catch { return []; } }
-    function putSaves(arr)   { localStorage.setItem(SAVES_KEY,   JSON.stringify(arr)); }
+    function saveTimestampSeed(save, index) {
+      const savedAt = Number(save && save.savedAt);
+      if (Number.isFinite(savedAt) && savedAt > 0) return savedAt;
+      const idTime = Number(save && save.id);
+      if (Number.isFinite(idTime) && idTime > 0) return idTime;
+      return index + 1;
+    }
+
+    function withSaveTimestamps(saves) {
+      return saves.map((save, index) => {
+        const createdAt = Number(save.createdAt) || saveTimestampSeed(save, index);
+        const updatedAt = Number(save.updatedAt) || Number(save.savedAt) || createdAt;
+        return { ...save, createdAt, updatedAt };
+      });
+    }
+
+    function getSaves() {
+      try {
+        const raw = JSON.parse(localStorage.getItem(SAVES_KEY)) || [];
+        const saves = withSaveTimestamps(raw);
+        const needsMigration = saves.some((save, index) =>
+          save.createdAt !== raw[index]?.createdAt || save.updatedAt !== raw[index]?.updatedAt
+        );
+        if (needsMigration) localStorage.setItem(SAVES_KEY, JSON.stringify(saves));
+        return saves;
+      } catch {
+        return [];
+      }
+    }
+    function putSaves(arr)   { localStorage.setItem(SAVES_KEY,   JSON.stringify(withSaveTimestamps(arr))); }
 
     function folderTimestampSeed(folder, index) {
       const idTime = Number(folder && folder.id);
@@ -5333,9 +5375,112 @@
       });
     }
 
+    function folderAddedToParentTime(folder) {
+      const folderedAt = Number(folder && folder.folderedAt);
+      if (Number.isFinite(folderedAt) && folderedAt > 0) return folderedAt;
+      const createdAt = Number(folder && folder.createdAt);
+      if (Number.isFinite(createdAt) && createdAt > 0) return createdAt;
+      const updatedAt = Number(folder && folder.updatedAt);
+      if (Number.isFinite(updatedAt) && updatedAt > 0) return updatedAt;
+      const idTime = Number(folder && folder.id);
+      return Number.isFinite(idTime) && idTime > 0 ? idTime : 0;
+    }
+
+    function saveAddedToFolderTime(save) {
+      const folderedAt = Number(save && save.folderedAt);
+      if (Number.isFinite(folderedAt) && folderedAt > 0) return folderedAt;
+      const savedAt = Number(save && save.savedAt);
+      if (Number.isFinite(savedAt) && savedAt > 0) return savedAt;
+      const idTime = Number(save && save.id);
+      return Number.isFinite(idTime) && idTime > 0 ? idTime : 0;
+    }
+
+    function saveCreatedTime(save) {
+      const createdAt = Number(save && save.createdAt);
+      if (Number.isFinite(createdAt) && createdAt > 0) return createdAt;
+      const savedAt = Number(save && save.savedAt);
+      if (Number.isFinite(savedAt) && savedAt > 0) return savedAt;
+      const idTime = Number(save && save.id);
+      return Number.isFinite(idTime) && idTime > 0 ? idTime : 0;
+    }
+
+    function saveUpdatedTime(save) {
+      const updatedAt = Number(save && save.updatedAt);
+      if (Number.isFinite(updatedAt) && updatedAt > 0) return updatedAt;
+      const savedAt = Number(save && save.savedAt);
+      if (Number.isFinite(savedAt) && savedAt > 0) return savedAt;
+      return saveCreatedTime(save);
+    }
+
+    function sortSavesNewestFirst(saves) {
+      return saves.slice().sort((a, b) =>
+        (saveAddedToFolderTime(b) - saveAddedToFolderTime(a)) ||
+        (a.name || '').localeCompare(b.name || '', undefined, { sensitivity: 'base', numeric: true })
+      );
+    }
+
+    function sortTopLevelSaves(saves) {
+      const mode = getFolderSortMode();
+      return saves.slice().sort((a, b) => {
+        if (mode === 'name-asc') {
+          return (a.name || '').localeCompare(b.name || '', undefined, { sensitivity: 'base', numeric: true }) ||
+            (saveCreatedTime(a) - saveCreatedTime(b));
+        }
+        if (mode === 'created-asc') {
+          return (saveCreatedTime(a) - saveCreatedTime(b)) ||
+            (a.name || '').localeCompare(b.name || '', undefined, { sensitivity: 'base', numeric: true });
+        }
+        return (saveUpdatedTime(b) - saveUpdatedTime(a)) ||
+          (saveCreatedTime(b) - saveCreatedTime(a)) ||
+          (a.name || '').localeCompare(b.name || '', undefined, { sensitivity: 'base', numeric: true });
+      });
+    }
+
+    function itemCreatedTime(item) {
+      return item.type === 'folder' ? folderAddedToParentTime(item.item) : saveCreatedTime(item.item);
+    }
+
+    function sortTopLevelItems(folders, saves) {
+      const mode = getFolderSortMode();
+      return [
+        ...folders.map(item => ({ type: 'folder', item })),
+        ...saves.map(item => ({ type: 'save', item }))
+      ].sort((a, b) => {
+        const nameCompare = (a.item.name || '').localeCompare(b.item.name || '', undefined, { sensitivity: 'base', numeric: true });
+        if (mode === 'name-asc') return nameCompare || (itemCreatedTime(a) - itemCreatedTime(b));
+        if (mode === 'created-asc') return (itemCreatedTime(a) - itemCreatedTime(b)) || nameCompare;
+        if (mode === 'created-desc') return (itemCreatedTime(b) - itemCreatedTime(a)) || nameCompare;
+
+        const aUpdated = a.type === 'folder' ? (Number(a.item.updatedAt) || itemCreatedTime(a)) : saveUpdatedTime(a.item);
+        const bUpdated = b.type === 'folder' ? (Number(b.item.updatedAt) || itemCreatedTime(b)) : saveUpdatedTime(b.item);
+        return (bUpdated - aUpdated) || (itemCreatedTime(b) - itemCreatedTime(a)) || nameCompare;
+      });
+    }
+
+    function sortFolderContents(childFolders, saves) {
+      return [
+        ...childFolders.map(item => ({ type: 'folder', item, time: folderAddedToParentTime(item), name: item.name || '' })),
+        ...saves.map(item => ({ type: 'save', item, time: saveAddedToFolderTime(item), name: item.name || '' }))
+      ].sort((a, b) =>
+        (b.time - a.time) ||
+        a.name.localeCompare(b.name, undefined, { sensitivity: 'base', numeric: true })
+      );
+    }
+
+    function renderFolderChildren(childFolders, saves, renderChildFolder) {
+      return sortFolderContents(childFolders, saves).map(entry =>
+        entry.type === 'folder' ? renderChildFolder(entry.item) : renderSaveItem(entry.item)
+      ).join('');
+    }
+
     function getChildFolders(folders, parentId) {
       const normalizedParentId = parentId || null;
-      return sortFolders(folders.filter(f => (f.parentFolderId || null) === normalizedParentId));
+      const children = folders.filter(f => (f.parentFolderId || null) === normalizedParentId);
+      if (!normalizedParentId) return sortFolders(children);
+      return children.slice().sort((a, b) =>
+        (folderAddedToParentTime(b) - folderAddedToParentTime(a)) ||
+        compareFolderNames(a, b)
+      );
     }
 
     function touchFolderIds(folderIds, folders = getFolders(), time = Date.now()) {
@@ -5453,7 +5598,8 @@
       const id = Date.now().toString();
       const folderId = folderEl.value || null;
       const saves = getSaves();
-      saves.push({ id, name, folderId, rows: getCurrentRows(), savedAt: Date.now() });
+      const now = Date.now();
+      saves.push({ id, name, folderId, rows: getCurrentRows(), savedAt: now, createdAt: now, updatedAt: now, folderedAt: now });
       putSaves(saves);
       touchFolders([folderId]);
       nameEl.value = '';
@@ -5496,8 +5642,10 @@
       const saves = getSaves();
       const idx = saves.findIndex(x => x.id === activeClassId);
       if (idx === -1) return;
+      const now = Date.now();
       saves[idx].rows    = getCurrentRows();
-      saves[idx].savedAt = Date.now();
+      saves[idx].savedAt = now;
+      saves[idx].updatedAt = now;
       putSaves(saves);
       touchFolders([saves[idx].folderId]);
       activeClassSnapshot = JSON.stringify(saves[idx].rows);
@@ -5540,6 +5688,7 @@
         if (idx !== -1) {
           const changed = saves2[idx].name !== val;
           saves2[idx].name = val;
+          if (changed) saves2[idx].updatedAt = Date.now();
           putSaves(saves2);
           if (changed) touchFolders([saves2[idx].folderId]);
         }
@@ -5559,7 +5708,7 @@
       let folders = getFolders();
       const id = Date.now().toString();
       const now = Date.now();
-      folders.push({ id, name: name.trim(), parentFolderId: parentFolderId || null, createdAt: now, updatedAt: now });
+      folders.push({ id, name: name.trim(), parentFolderId: parentFolderId || null, createdAt: now, updatedAt: now, folderedAt: now });
       folders = touchFolderIds([parentFolderId], folders, now);
       putFolders(folders);
       renderSavesList();
@@ -5575,7 +5724,9 @@
       const idx = folders.findIndex(f => f.id === folderId);
       if (idx !== -1) {
         const oldParentId = folders[idx].parentFolderId || null;
-        folders[idx].parentFolderId = newParentId || null;
+        const nextParentId = newParentId || null;
+        folders[idx].parentFolderId = nextParentId;
+        if (oldParentId !== nextParentId) folders[idx].folderedAt = Date.now();
         putFolders(touchFolderIds([folderId, oldParentId, newParentId], folders));
       }
       closeAllMoveDropdowns();
@@ -5631,14 +5782,7 @@
       dropdown.innerHTML = html;
       document.body.appendChild(dropdown);
 
-      const rect = btnEl.getBoundingClientRect();
-      const ddW  = 190;
-      let left = rect.right - ddW;
-      if (left < 8) left = 8;
-      dropdown.style.left  = left + 'px';
-      dropdown.style.top   = (rect.bottom + 4) + 'px';
-      dropdown.style.minWidth = ddW + 'px';
-      dropdown.style.zIndex = '9999';
+      positionMoveDropdown(dropdown, btnEl, 210);
 
       setTimeout(() => {
         document.addEventListener('click', outsideDropdownClose, { once: true });
@@ -5750,12 +5894,35 @@
       const idx = saves.findIndex(x => x.id === saveId);
       if (idx !== -1) {
         const oldFolderId = saves[idx].folderId || null;
-        saves[idx].folderId = folderId || null;
+        const nextFolderId = folderId || null;
+        saves[idx].folderId = nextFolderId;
+        if (oldFolderId !== nextFolderId) {
+          const now = Date.now();
+          saves[idx].folderedAt = now;
+          saves[idx].updatedAt = now;
+        }
         putSaves(saves);
         touchFolders([oldFolderId, folderId]);
       }
       closeAllMoveDropdowns();
       renderSavesList();
+    }
+
+    function positionMoveDropdown(dropdown, btnEl, width = 190) {
+      const rect = btnEl.getBoundingClientRect();
+      const margin = 8;
+      const left = Math.max(margin, Math.min(rect.right - width, window.innerWidth - width - margin));
+      dropdown.style.left = left + 'px';
+      dropdown.style.top = (rect.bottom + 4) + 'px';
+      dropdown.style.minWidth = width + 'px';
+      dropdown.style.maxWidth = Math.max(160, window.innerWidth - (margin * 2)) + 'px';
+      dropdown.style.zIndex = '9999';
+
+      const dropdownRect = dropdown.getBoundingClientRect();
+      if (dropdownRect.bottom > window.innerHeight - margin) {
+        const topAbove = rect.top - dropdownRect.height - 4;
+        dropdown.style.top = Math.max(margin, topAbove) + 'px';
+      }
     }
 
     function toggleMoveDropdown(saveId, btnEl) {
@@ -5788,15 +5955,7 @@
       dropdown.innerHTML = html;
       document.body.appendChild(dropdown);
 
-      // Position relative to the button
-      const rect = btnEl.getBoundingClientRect();
-      const ddW  = 180;
-      let left = rect.right - ddW;
-      if (left < 8) left = 8;
-      dropdown.style.left = left + 'px';
-      dropdown.style.top  = (rect.bottom + 4) + 'px';
-      dropdown.style.minWidth = ddW + 'px';
-      dropdown.style.zIndex = '9999';
+      positionMoveDropdown(dropdown, btnEl, 190);
 
       setTimeout(() => {
         document.addEventListener('click', outsideDropdownClose, { once: true });
@@ -5847,19 +6006,20 @@
 
     function renderFolderBlock(f, saves, allFolders, depth) {
       const childFolders = getChildFolders(allFolders, f.id);
-      const items        = saves.filter(s => s.folderId === f.id);
+      const items        = sortSavesNewestFirst(saves.filter(s => s.folderId === f.id));
       const totalCount   = items.length + childFolders.length;
       const indent       = depth > 0 ? `margin-left:${depth * 12}px;` : '';
 
-      const childrenHtml = [
-        ...childFolders.map(cf => renderFolderBlock(cf, saves, allFolders, depth + 1)),
-        ...items.map(renderSaveItem)
-      ].join('');
+      const childrenHtml = renderFolderChildren(
+        childFolders,
+        items,
+        cf => renderFolderBlock(cf, saves, allFolders, depth + 1)
+      );
 
       return `<div class="folder-block" data-folder-id="${f.id}" style="${indent}">
         <div class="folder-header" onclick="toggleFolder(this)">
           <span class="folder-chevron">▶</span>
-          ${FOLDER_ICON_SVG}
+          ${FOLDER_TOGGLE_ICON_SVG}
           <span class="folder-name-display">${escHtml(f.name)}</span>
           <span class="folder-count">${totalCount}</span>
           <div class="folder-actions" onclick="event.stopPropagation()">
@@ -5920,7 +6080,7 @@
         function renderSearchFolder(f, depth) {
           const nameMatched  = matchedFolderIds.has(f.id);
           const childFolders = getChildFolders(folders, f.id);
-          const directSaves  = saves.filter(s => s.folderId === f.id);
+          const directSaves  = sortSavesNewestFirst(saves.filter(s => s.folderId === f.id));
           const indent       = depth > 0 ? `margin-left:${depth * 12}px;` : '';
           const isOpen       = openFolderIds.has(f.id);
 
@@ -5929,15 +6089,17 @@
 
           let childHtml = '';
           if (nameMatched && !isOpen) {
-            childHtml = [
-              ...childFolders.map(cf => renderFolderBlock(cf, saves, folders, depth + 1)),
-              ...directSaves.map(renderSaveItem)
-            ].join('');
+            childHtml = renderFolderChildren(
+              childFolders,
+              directSaves,
+              cf => renderFolderBlock(cf, saves, folders, depth + 1)
+            );
           } else if (isOpen) {
-            childHtml = [
-              ...visibleChildFolders.map(cf => renderSearchFolder(cf, depth + 1)),
-              ...visibleSaves.map(renderSaveItem)
-            ].join('');
+            childHtml = renderFolderChildren(
+              visibleChildFolders,
+              visibleSaves,
+              cf => renderSearchFolder(cf, depth + 1)
+            );
           }
 
           const count = nameMatched && !isOpen
@@ -5947,7 +6109,7 @@
           return `<div class="folder-block${isOpen ? ' open' : ''}" data-folder-id="${f.id}" style="${indent}">
             <div class="folder-header" onclick="toggleFolder(this)">
               <span class="folder-chevron">▶</span>
-              ${FOLDER_ICON_SVG}
+              ${FOLDER_TOGGLE_ICON_SVG}
               <span class="folder-name-display">${escHtml(f.name)}</span>
               <span class="folder-count">${count}</span>
               <div class="folder-actions" onclick="event.stopPropagation()">
@@ -5963,7 +6125,7 @@
         let html = '';
         getChildFolders(folders, null).filter(f => folderHasMatch(f.id))
           .forEach(f => { html += renderSearchFolder(f, 0); });
-        html += saves.filter(s => !s.folderId && matchedSaveIds.has(s.id)).map(renderSaveItem).join('');
+        html += sortTopLevelSaves(saves.filter(s => !s.folderId && matchedSaveIds.has(s.id))).map(renderSaveItem).join('');
         list.innerHTML = html;
         return;
       }
@@ -5975,13 +6137,11 @@
       }
 
       let html = '';
-      // Render top-level folders recursively
       const topFolders = getChildFolders(folders, null);
-      topFolders.forEach(f => { html += renderFolderBlock(f, saves, folders, 0); });
-
-      // Unfoldered classes
       const unfoldered = saves.filter(s => !s.folderId);
-      html += unfoldered.slice().reverse().map(renderSaveItem).join('');
+      html += sortTopLevelItems(topFolders, unfoldered).map(entry =>
+        entry.type === 'folder' ? renderFolderBlock(entry.item, saves, folders, 0) : renderSaveItem(entry.item)
+      ).join('');
 
       list.innerHTML = html || `<div class="saves-empty">${currentSavesMode === 'save' ? 'No saved courses yet.<br>Save your current setup here.' : 'No saved courses yet.'}</div>`;
     }
@@ -6918,8 +7078,17 @@
     function shareResults() {
       const rows = getRows().filter(r => r.grade !== null);
       if (!rows.length) return;
+      const allRows = getRowsNormalized();
+      const ungraded = allRows.filter(r => r.grade === null);
+      const sharePrompt = document.getElementById('share-modal-prompt');
+      if (sharePrompt) {
+        sharePrompt.textContent = ungraded.length
+          ? 'Your grade summary will be copied to your clipboard. Want to include what average you need on remaining assignments to pass?'
+          : 'Your grade summary will be copied to your clipboard. Want to include whether your final grade meets the passing grade?';
+      }
       document.getElementById('share-passing-input').value = '';
       document.getElementById('share-modal-overlay').classList.add('open');
+      setTimeout(() => document.getElementById('share-passing-input')?.focus(), 50);
     }
 
     function closeShareModal() {
@@ -6954,13 +7123,18 @@
         text += `▸ Minimum Final Grade (Blank Grades Counted as 0): ${minFinal.toFixed(2)}%\n`;
       }
 
-      if (includeNeeded && ungradedWeight > 0) {
+      if (includeNeeded) {
         const passingInput = parseFloat(document.getElementById('share-passing-input').value);
         const target = isNaN(passingInput) ? 70 : passingInput;
-        const targetPoints = target * (allWeight / 100);
-        const stillNeeded  = targetPoints - earnedSoFar;
-        const neededAvg    = (stillNeeded / ungradedWeight) * 100;
-        text += `▸ Need to Pass (${target}%): ${neededAvg.toFixed(1)}% avg on remaining\n`;
+        if (ungradedWeight > 0) {
+          const targetPoints = target * (allWeight / 100);
+          const stillNeeded  = targetPoints - earnedSoFar;
+          const neededAvg    = (stillNeeded / ungradedWeight) * 100;
+          text += `▸ Need to Pass (${target}%): ${neededAvg.toFixed(1)}% avg on remaining\n`;
+        } else {
+          text += `▸ Passing Grade: ${target}%\n`;
+          text += `▸ Status: ${currentGrade >= target ? 'Passed' : 'Did not pass'} (${currentGrade.toFixed(2)}% final grade)\n`;
+        }
       }
 
       if (graded.length) {
@@ -6983,6 +7157,19 @@
       closeShareModal();
       copyToClipboard(text);
       showCopiedModal('Your grade summary is ready to paste anywhere.');
+    }
+
+    function handleSharePassingKeydown(event) {
+      if (event.key !== 'Enter') return;
+      event.preventDefault();
+      doShare(event.currentTarget.value.trim() !== '');
+    }
+
+    function handleShareModalKeydown(event) {
+      if (event.key !== 'Enter' || event.target.closest('button')) return;
+      event.preventDefault();
+      const input = document.getElementById('share-passing-input');
+      doShare((input?.value || '').trim() !== '');
     }
 
     // ── Name placeholder rotation ────────────────────────────────────
@@ -7076,7 +7263,7 @@
   </div>
 
   <!-- Share Modal -->
-  <div class="share-modal-overlay" id="share-modal-overlay" onclick="if(event.target===this)closeShareModal()">
+  <div class="share-modal-overlay" id="share-modal-overlay" onclick="if(event.target===this)closeShareModal()" onkeydown="handleShareModalKeydown(event)">
     <div class="share-modal">
       <div class="share-modal-header">
         <div class="share-modal-title">📋 Copy Grade Summary</div>
@@ -7084,10 +7271,10 @@
       </div>
       <hr class="share-modal-divider" />
       <div class="share-modal-body">
-        <p>Your grade summary will be copied to your clipboard. Want to include what average you need on remaining assignments to pass?</p>
+        <p id="share-modal-prompt">Your grade summary will be copied to your clipboard. Want to include what average you need on remaining assignments to pass?</p>
         <div class="share-modal-field">
           <label>Passing grade (%)</label>
-          <input type="number" id="share-passing-input" min="0" max="100" placeholder="e.g. 70" />
+          <input type="number" id="share-passing-input" min="0" max="100" placeholder="e.g. 70" onkeydown="handleSharePassingKeydown(event)" />
         </div>
         <div class="share-modal-actions">
           <button class="share-modal-btn include" onclick="doShare(true)">Include &amp; Copy</button>
