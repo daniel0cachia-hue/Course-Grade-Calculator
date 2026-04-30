@@ -1490,11 +1490,13 @@
       left: 11px;
       top: 50%;
       transform: translateY(-50%);
-      font-size: 14px;
+      width: 18px;
+      height: 18px;
       color: var(--text-muted);
       pointer-events: none;
       line-height: 1;
     }
+    .saves-search-icon svg { width: 100%; height: 100%; display: block; }
     .saves-search-clear {
       position: absolute;
       right: 8px;
@@ -1583,6 +1585,7 @@
       -webkit-appearance: none;
       position: absolute;
       inset: 0;
+      z-index: 1;
       width: 100%;
       height: 100%;
       border: 0;
@@ -1621,11 +1624,16 @@
     }
     .folder-header:hover { background: var(--border); }
     .folder-chevron {
-      font-size: 10px;
+      width: 14px;
+      height: 14px;
       color: var(--text-muted);
       transition: transform 0.2s;
       flex-shrink: 0;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
     }
+    .folder-chevron svg { width: 100%; height: 100%; display: block; }
     .folder-block.open > .folder-header > .folder-chevron { transform: rotate(90deg); }
     .folder-icon { font-size: 15px; flex-shrink: 0; }
     .folder-name-display {
@@ -1663,6 +1671,19 @@
       font-size: 12px;
       cursor: pointer;
       transition: all 0.15s;
+    }
+    .btn-folder-action svg,
+    .btn-move-save svg,
+    .btn-del-save svg,
+    .btn-folder-create-cancel svg,
+    .saves-search-clear svg,
+    .help-close svg,
+    .share-modal-close svg,
+    .del-btn svg {
+      width: 1.15em;
+      height: 1.15em;
+      display: block;
+      flex-shrink: 0;
     }
     .btn-folder-action:hover { border-color: var(--border); background: var(--surface); }
     .btn-folder-action.danger:hover { border-color: var(--danger); color: var(--danger); background: var(--danger-dim); }
@@ -1790,6 +1811,9 @@
       font-size: 11px;
       color: var(--text-muted);
       cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
     }
     /* Column header tooltips */
     .th-wrap {
@@ -3779,7 +3803,8 @@
 
     .saves-search-icon {
       left: 18px;
-      font-size: 20px;
+      width: 22px;
+      height: 22px;
     }
 
     .saves-search-clear {
@@ -4388,6 +4413,11 @@
       align-items: center;
       gap: 10px;
     }
+    .share-modal-title svg {
+      width: 1.05em;
+      height: 1.05em;
+      flex-shrink: 0;
+    }
     .share-modal-close {
       background: var(--surface2, #f0f2f5);
       border: 1px solid var(--border);
@@ -4755,7 +4785,8 @@
 
       .saves-search-icon {
         left: 16px;
-        font-size: 18px;
+        width: 20px;
+        height: 20px;
       }
 
       #saves-browse-tools .folder-sort-control,
@@ -4803,6 +4834,346 @@
       #saves-browse-tools .folder-sort-control,
       #saves-browse-tools .btn-new-folder {
         flex-basis: 100% !important;
+      }
+    }
+
+    @media (max-width: 560px) {
+      header {
+        padding-bottom: 60px;
+      }
+
+      .header-controls {
+        top: 76px;
+      }
+
+    }
+
+    @media (max-width: 360px) {
+      header {
+        padding: 12px 12px 52px;
+      }
+
+      .header-favicon {
+        left: 12px;
+        top: 12px;
+        width: 52px;
+        height: 52px;
+      }
+
+      header h1,
+      header h1 span {
+        padding-left: 64px;
+        min-height: 52px;
+      }
+
+      .header-controls {
+        left: 12px;
+        right: 12px;
+        top: 72px;
+        width: calc(100% - 24px);
+      }
+
+      #saves-browse-tools .folder-sort-control,
+      #saves-browse-tools .btn-new-folder {
+        flex: 1 1 calc(50% - 5px) !important;
+        flex-basis: calc(50% - 5px) !important;
+      }
+
+      #saves-browse-tools .folder-sort-control {
+        align-content: center;
+        flex-wrap: wrap;
+        row-gap: 1px;
+        column-gap: 5px;
+        padding: 6px 8px;
+      }
+
+      #saves-browse-tools .folder-sort-label,
+      #saves-browse-tools .folder-sort-value,
+      #saves-browse-tools .btn-new-folder {
+        font-size: 0.78rem;
+        line-height: 1.08;
+      }
+
+      #saves-browse-tools .folder-sort-value {
+        white-space: normal;
+        overflow: visible;
+        text-overflow: clip;
+      }
+
+    }
+
+    @media (min-width: 421px) and (max-width: 600px) {
+      .folder-header {
+        flex-wrap: nowrap;
+        align-items: center;
+        padding: 12px 14px;
+        gap: 8px;
+      }
+
+      .folder-name-display {
+        order: 0;
+        flex: 1 1 auto;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        line-height: 1.15;
+        font-size: 0.98rem;
+      }
+
+      .folder-count {
+        margin-left: 0;
+      }
+
+      .folder-actions {
+        flex: 0 0 auto;
+        flex-wrap: nowrap;
+        gap: 4px;
+      }
+
+      .save-item {
+        flex-wrap: nowrap;
+        align-items: center;
+        padding: 14px;
+        gap: 10px;
+      }
+
+      .save-item-info {
+        flex: 1 1 auto;
+        min-width: 0;
+      }
+
+      .save-item-name {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        line-height: 1.2;
+      }
+
+      .save-item-actions {
+        width: auto;
+        flex: 0 0 auto;
+        flex-direction: row;
+        flex-wrap: nowrap;
+        justify-content: flex-end;
+        gap: 6px;
+      }
+    }
+
+    @media (max-width: 420px) {
+      .folder-header {
+        display: grid;
+        grid-template-columns: auto auto minmax(0, 1fr) auto;
+        grid-template-areas:
+          "chevron icon name count"
+          "actions actions actions actions";
+        align-items: center;
+        gap: 8px 10px;
+        padding: 12px;
+      }
+
+      .folder-chevron {
+        grid-area: chevron;
+      }
+
+      .folder-header .course-folder-icon {
+        grid-area: icon;
+      }
+
+      .folder-name-display {
+        grid-area: name;
+        order: 0;
+        flex: initial;
+        white-space: normal;
+        overflow: visible;
+        text-overflow: clip;
+        overflow-wrap: anywhere;
+        line-height: 1.16;
+        font-size: 0.98rem;
+      }
+
+      .folder-count {
+        grid-area: count;
+        margin-left: 0;
+      }
+
+      .folder-actions {
+        grid-area: actions;
+        width: 100%;
+        justify-content: center;
+        gap: 6px;
+        margin-top: 2px;
+      }
+
+      .save-item {
+        flex-wrap: wrap;
+        align-items: center;
+        padding: 14px;
+        gap: 10px 8px;
+      }
+
+      .save-item-info {
+        flex: 1 1 100%;
+        min-width: 0;
+      }
+
+      .save-item-name {
+        white-space: normal;
+        overflow: visible;
+        text-overflow: clip;
+        overflow-wrap: anywhere;
+        line-height: 1.18;
+      }
+
+      .save-item-actions {
+        width: 100%;
+        flex-direction: row;
+        flex-wrap: nowrap;
+        justify-content: center;
+        gap: 8px;
+      }
+
+      #active-class-banner {
+        flex-wrap: wrap;
+        justify-content: center;
+        text-align: center;
+        row-gap: 10px;
+        column-gap: 8px;
+      }
+
+      #active-class-banner > div:first-child,
+      #active-class-banner > div:last-child {
+        width: 100%;
+        justify-content: center;
+      }
+
+      #active-class-banner > div:first-child {
+        flex-wrap: wrap;
+        row-gap: 6px;
+      }
+
+      #active-class-banner > div:last-child {
+        margin-left: 0;
+      }
+
+      .acb-name {
+        max-width: 100%;
+        white-space: normal;
+        overflow-wrap: anywhere;
+        line-height: 1.15;
+      }
+    }
+
+    /* Course and folder names should always be readable, never truncated. */
+    .save-item-name,
+    .folder-name-display,
+    .acb-name {
+      white-space: normal !important;
+      overflow: visible !important;
+      text-overflow: clip !important;
+      overflow-wrap: anywhere;
+      word-break: break-word;
+    }
+
+    .acb-name {
+      max-width: none !important;
+      line-height: 1.15;
+    }
+
+    #active-class-banner > div:first-child {
+      flex-wrap: wrap;
+    }
+
+    @media (min-width: 421px) and (max-width: 600px) {
+      .folder-name-display,
+      .save-item-name {
+        white-space: normal !important;
+        overflow: visible !important;
+        text-overflow: clip !important;
+      }
+    }
+
+    @media (max-width: 420px) {
+      .save-item {
+        text-align: center;
+      }
+
+      .save-item-info {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+      }
+
+      .save-item-meta {
+        text-align: center;
+      }
+
+      .folder-header {
+        text-align: center;
+      }
+
+      .folder-name-display {
+        text-align: center;
+      }
+
+      .folder-count {
+        justify-self: center;
+      }
+    }
+
+    body.perf-lite #help-overlay,
+    body.perf-lite #pass-overlay,
+    body.perf-lite #saves-overlay,
+    body.perf-lite .share-modal-overlay,
+    body.perf-lite .copied-modal-overlay,
+    body.perf-lite .pass-copy-modal-overlay {
+      backdrop-filter: none !important;
+      -webkit-backdrop-filter: none !important;
+    }
+
+    body.perf-lite .btn-primary,
+    body.perf-lite .result-card,
+    body.perf-lite .table-wrapper,
+    body.perf-lite .help-modal,
+    body.perf-lite .saves-modal,
+    body.perf-lite .share-modal,
+    body.perf-lite .move-dropdown {
+      box-shadow: none !important;
+    }
+
+    body.perf-lite .help-modal,
+    body.perf-lite .saves-modal,
+    body.perf-lite .share-modal,
+    body.perf-lite #help-overlay,
+    body.perf-lite #pass-overlay,
+    body.perf-lite #saves-overlay,
+    body.perf-lite .share-modal-overlay,
+    body.perf-lite .copied-modal-overlay,
+    body.perf-lite .pass-copy-modal-overlay {
+      animation: none !important;
+    }
+
+    body.perf-lite .row,
+    body.perf-lite .row input,
+    body.perf-lite .row textarea,
+    body.perf-lite .tb-btn,
+    body.perf-lite .btn,
+    body.perf-lite .btn-theme,
+    body.perf-lite .add-row-btn,
+    body.perf-lite .result-card,
+    body.perf-lite .save-item,
+    body.perf-lite .folder-header {
+      transition-duration: 0.08s !important;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *,
+      *::before,
+      *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        scroll-behavior: auto !important;
+        transition-duration: 0.01ms !important;
       }
     }
   </style>
@@ -4903,7 +5274,7 @@
       <h2>How to Use the Course Grade Calculator</h2>
       <p>Enter each of your assignments, exams, or grade categories along with their weight (how much they count toward your final grade) and the score you received. Weights should add up to 100%, but if you haven't entered everything yet, the calculator automatically assumes the rest of your class makes up the difference.</p>
       <p>Hit <strong>Calculate Grade</strong> to see your current standing. If you have ungraded work remaining, you'll also see your current performance on graded work only so you always know exactly where you stand. Use <strong>What Do I Need to Pass?</strong> to find out the average score you need on remaining assignments to hit your target grade.</p>
-      <p>Use <strong>Save Course</strong> to store the setup currently in your table, and <strong>My Courses</strong> to browse, organize, sort, and reload saved courses whenever grades come in. Folders are shown by recently edited by default, with options for alphabetical order and date added.</p>
+      <p>Use <strong>Save Course</strong> to store the setup currently in your table, and <strong>My Courses</strong> to browse, organize, sort, and reload saved courses whenever grades come in. <strong>Sort By</strong> changes the order of top-level folders and classes not inside folders; items inside a folder stay ordered by most recent activity so the thing you just edited rises to the top of that folder.</p>
     </section>
   </div>
 
@@ -4912,7 +5283,7 @@
     <div class="help-modal pass-modal" role="dialog" aria-modal="true" aria-labelledby="pass-title">
       <div class="help-header">
         <h2 id="pass-title">What Do I Need to Pass?</h2>
-        <button class="help-close" onclick="closePassModal()" aria-label="Close">✕</button>
+        <button class="help-close" onclick="closePassModal()" aria-label="Close"><svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="m4.5 4.5 7 7M11.5 4.5l-7 7" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg></button>
       </div>
       <div class="help-body">
         <div class="pass-modal-intro">
@@ -4943,7 +5314,7 @@
     <div class="saves-modal" role="dialog" aria-modal="true" aria-labelledby="saves-title">
       <div class="saves-header">
         <h2 id="saves-title">My Courses</h2>
-        <button class="help-close" onclick="closeSaves()" aria-label="Close">✕</button>
+        <button class="help-close" onclick="closeSaves()" aria-label="Close"><svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="m4.5 4.5 7 7M11.5 4.5l-7 7" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg></button>
       </div>
       <div class="saves-body" id="saves-body">
         <!-- Save current -->
@@ -4963,21 +5334,21 @@
           <div class="folder-create-inline" id="inline-folder-create" style="display:none;">
             <input type="text" id="inline-folder-name" placeholder="Folder name…" maxlength="48" onkeydown="if(event.key==='Enter')confirmInlineFolder();if(event.key==='Escape')cancelInlineFolder();" />
             <button class="btn-folder-create-confirm" onclick="confirmInlineFolder()">Create</button>
-            <button class="btn-folder-create-cancel" onclick="cancelInlineFolder()">✕</button>
+            <button class="btn-folder-create-cancel" onclick="cancelInlineFolder()" aria-label="Cancel folder creation"><svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="m4.5 4.5 7 7M11.5 4.5l-7 7" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg></button>
           </div>
         </div>
 
         <!-- Search + folder toolbar -->
         <div id="saves-browse-tools">
           <div class="saves-search-wrap">
-            <span class="saves-search-icon">🔍</span>
+            <span class="saves-search-icon"><svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><circle cx="7" cy="7" r="4.4" stroke="currentColor" stroke-width="1.5"/><path d="m10.3 10.3 3 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></span>
             <input type="text" class="saves-search" id="saves-search" placeholder="Search courses…" oninput="onSearchInput()" />
-            <button class="saves-search-clear" id="saves-search-clear" onclick="clearSearch()">✕</button>
+            <button class="saves-search-clear" id="saves-search-clear" onclick="clearSearch()" aria-label="Clear search"><svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="m4.5 4.5 7 7M11.5 4.5l-7 7" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg></button>
           </div>
-          <label class="folder-sort-control" title="Sort folders">
+          <label class="folder-sort-control" title="Sort top-level courses and folders">
             <span class="folder-sort-label">Sort By:</span>
             <span class="folder-sort-value" id="folder-sort-value">Recently Edited</span>
-            <select class="folder-sort-select" id="folder-sort-select" aria-label="Sort folders" onchange="setFolderSortMode(this.value)">
+            <select class="folder-sort-select" id="folder-sort-select" aria-label="Sort top-level courses and folders" onchange="setFolderSortMode(this.value)">
               <option value="updated-desc">Recently Edited</option>
               <option value="name-asc">Alphabetical</option>
               <option value="created-asc">Date Added: Oldest</option>
@@ -4998,7 +5369,7 @@
     <div class="help-modal" role="dialog" aria-modal="true" aria-labelledby="help-title">
       <div class="help-header">
         <h2 id="help-title">How to Use the Grade Calculator</h2>
-        <button class="help-close" onclick="closeHelp()" aria-label="Close help">✕</button>
+        <button class="help-close" onclick="closeHelp()" aria-label="Close help"><svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="m4.5 4.5 7 7M11.5 4.5l-7 7" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg></button>
       </div>
       <div class="help-body">
 
@@ -5068,7 +5439,7 @@
             </div>
             <div class="key-row">
               <div class="keys icon-key has-text"><span class="tb-color-swatch" style="width:16px;height:16px;border-radius:5px;background:var(--accent);border:0;"></span><span>Color</span></div>
-              <div class="key-desc">Pick a custom accent color. Hit ↺ beside it to reset to the default blue. Your preference is remembered when you return.</div>
+              <div class="key-desc">Pick a custom accent color. Use the reset button beside it to return to the default blue. Your preference is remembered when you return.</div>
             </div>
             <div class="key-row">
               <div class="keys icon-key has-text"><svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3.2 8.2 6.5 11.5 13 4.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Pass</span></div>
@@ -5083,7 +5454,7 @@
 
         <section class="help-section">
           <h3>Saving Courses</h3>
-          <p>Click <strong>Save Course</strong> to store the setup currently in your table, or <strong>My Courses</strong> to open the course manager. It stores assignment names, weights, grades, folder location, and the active-course editing state.</p>
+          <p>Click <strong>Save Course</strong> to store the setup currently in your table, or <strong>My Courses</strong> to open the course manager. It stores assignment names, weights, grades, folder location, and the active-course editing state. When you rename a saved class or folder, or save table edits, that item moves to the top of its folder.</p>
           <div class="key-grid" style="margin-top:10px;">
             <div class="key-row">
               <div class="keys icon-key has-text"><svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M1.8 4.4c0-.66.54-1.2 1.2-1.2H6.1l1.2 1.4H13c.66 0 1.2.54 1.2 1.2v5.8c0 .66-.54 1.2-1.2 1.2H3c-.66 0-1.2-.54-1.2-1.2V4.4Z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg><span>Load</span></div>
@@ -5106,7 +5477,7 @@
 
         <section class="help-section">
           <h3>Search &amp; Folders</h3>
-          <p>Use search in the course manager to find saved courses or folders. Searching a folder name shows that folder without opening it. Searching a course name opens whatever folders are needed so the matching course is visible. Use <strong>Sort By</strong> to order folders by recently edited, alphabetical, date added oldest, or date added newest.</p>
+          <p>Use search in the course manager to find saved courses or folders. Searching a folder name shows that folder without opening it. Searching a course name opens whatever folders are needed so the matching course is visible. Use <strong>Sort By</strong> to order only top-level folders and classes not inside folders by recently edited, alphabetical, date added oldest, or date added newest. Contents inside folders automatically stay sorted by most recent activity.</p>
           <div class="key-grid" style="margin-top:10px;">
             <div class="key-row">
               <div class="keys icon-key has-text"><svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M1.8 4.4c0-.66.54-1.2 1.2-1.2H6.1l1.2 1.4H13c.66 0 1.2.54 1.2 1.2v5.8c0 .66-.54 1.2-1.2 1.2H3c-.66 0-1.2-.54-1.2-1.2V4.4Z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/><path d="M8 7.1v4.2M5.9 9.2h4.2" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg><span>Folder</span></div>
@@ -5114,10 +5485,10 @@
             </div>
             <div class="key-row">
               <div class="keys icon-key has-text"><svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 3h8M5.5 8h5M7 13h2" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg><span>Sort</span></div>
-              <div class="key-desc">Changes folder order. Recently edited is the default, then you can switch to alphabetical, date added oldest, or date added newest.</div>
+              <div class="key-desc">Changes the order of top-level folders and classes not inside folders. It does not override the inside of a folder, where recently edited classes and folders move to the top.</div>
             </div>
             <div class="key-row">
-              <div class="keys icon-key"><svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M5 10.8 10.8 5M7.2 5H10.8V8.6M3.2 13h9.6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+              <div class="keys icon-key"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M6 18c6.4-.45 10.35-4.25 10.8-10.8" stroke="currentColor" stroke-width="2.1" stroke-linecap="round"/><path d="M13.4 8.4 17 6.6l1.8 3.6" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
               <div class="key-desc">Click the move icon on a folder header to place it inside another folder, or move it back to the top level.</div>
             </div>
             <div class="key-row">
@@ -5125,7 +5496,7 @@
               <div class="key-desc">Click a folder header to expand or collapse it and see the courses inside.</div>
             </div>
             <div class="key-row">
-              <div class="keys icon-key"><svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M5 10.8 10.8 5M7.2 5H10.8V8.6M3.2 13h9.6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+              <div class="keys icon-key"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M6 18c6.4-.45 10.35-4.25 10.8-10.8" stroke="currentColor" stroke-width="2.1" stroke-linecap="round"/><path d="M13.4 8.4 17 6.6l1.8 3.6" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
               <div class="key-desc">Click the move icon on any class to assign it to a folder, or remove it from its current folder.</div>
             </div>
             <div class="key-row">
@@ -5145,9 +5516,19 @@
 
   <script>
     const DEFAULT_ACCENT = '#247cf4';
+    const PERF_LITE = /\bWindows\b/i.test(navigator.userAgent) ||
+      (navigator.hardwareConcurrency && navigator.hardwareConcurrency <= 4) ||
+      (navigator.deviceMemory && navigator.deviceMemory <= 4);
+    if (PERF_LITE) document.body.classList.add('perf-lite');
+
     const FOLDER_ICON_SVG = `<svg class="course-folder-icon folder-closed-icon" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M1.8 4.4c0-.66.54-1.2 1.2-1.2H6.1l1.2 1.4H13c.66 0 1.2.54 1.2 1.2v5.8c0 .66-.54 1.2-1.2 1.2H3c-.66 0-1.2-.54-1.2-1.2V4.4Z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg>`;
     const OPEN_FOLDER_ICON_SVG = `<svg class="course-folder-icon folder-open-icon" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M1.7 6.1c.09-.57.58-1 1.16-1h3.08l1.15-1.35c.23-.27.56-.42.91-.42h4.9c.66 0 1.2.54 1.2 1.2v1.25" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/><path d="M1.95 6.55h10.8c.78 0 1.34.74 1.13 1.5l-1.03 3.75c-.14.52-.62.88-1.15.88H2.95c-.63 0-1.15-.49-1.19-1.12l-.25-3.75c-.05-.69.5-1.26 1.19-1.26Z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg>`;
     const FOLDER_TOGGLE_ICON_SVG = FOLDER_ICON_SVG + OPEN_FOLDER_ICON_SVG;
+    const ICON_CLOSE_SVG = `<svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="m4.5 4.5 7 7M11.5 4.5l-7 7" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>`;
+    const ICON_MOVE_SVG = `<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M6 18c6.4-.45 10.35-4.25 10.8-10.8" stroke="currentColor" stroke-width="2.1" stroke-linecap="round"/><path d="M13.4 8.4 17 6.6l1.8 3.6" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+    const ICON_RENAME_SVG = `<svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M3 11.8 3.4 14l2.2-.4 7-7a1.6 1.6 0 0 0-2.3-2.3l-7 7Z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg>`;
+    const ICON_CHEVRON_SVG = `<svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="m6 4 4 4-4 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+    const ICON_TRASH_SVG = `<svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M3.2 4.5h9.6M6.3 4.5V3.2h3.4v1.3M5 6.4l.4 6.4h5.2l.4-6.4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
 
     function openHelp() {
       const overlay = document.getElementById('help-overlay');
@@ -5200,6 +5581,15 @@
       } else {
         el.style.height = el.scrollHeight + 'px';
       }
+    }
+
+    function scheduleResizeName(el) {
+      if (!el || el._resizePending) return;
+      el._resizePending = true;
+      requestAnimationFrame(() => {
+        el._resizePending = false;
+        resizeName(el);
+      });
     }
 
     function getNameValue(row) {
@@ -5412,6 +5802,16 @@
       return saveCreatedTime(save);
     }
 
+    function folderActivityTime(folder) {
+      const updatedAt = Number(folder && folder.updatedAt);
+      if (Number.isFinite(updatedAt) && updatedAt > 0) return updatedAt;
+      return folderAddedToParentTime(folder);
+    }
+
+    function saveActivityTime(save) {
+      return saveUpdatedTime(save) || saveAddedToFolderTime(save);
+    }
+
     function sortSavesNewestFirst(saves) {
       return saves.slice().sort((a, b) =>
         (saveAddedToFolderTime(b) - saveAddedToFolderTime(a)) ||
@@ -5459,8 +5859,8 @@
 
     function sortFolderContents(childFolders, saves) {
       return [
-        ...childFolders.map(item => ({ type: 'folder', item, time: folderAddedToParentTime(item), name: item.name || '' })),
-        ...saves.map(item => ({ type: 'save', item, time: saveAddedToFolderTime(item), name: item.name || '' }))
+        ...childFolders.map(item => ({ type: 'folder', item, time: folderActivityTime(item), name: item.name || '' })),
+        ...saves.map(item => ({ type: 'save', item, time: saveActivityTime(item), name: item.name || '' }))
       ].sort((a, b) =>
         (b.time - a.time) ||
         a.name.localeCompare(b.name, undefined, { sensitivity: 'base', numeric: true })
@@ -5478,7 +5878,7 @@
       const children = folders.filter(f => (f.parentFolderId || null) === normalizedParentId);
       if (!normalizedParentId) return sortFolders(children);
       return children.slice().sort((a, b) =>
-        (folderAddedToParentTime(b) - folderAddedToParentTime(a)) ||
+        (folderActivityTime(b) - folderActivityTime(a)) ||
         compareFolderNames(a, b)
       );
     }
@@ -5509,10 +5909,14 @@
       if (!activeClassId) return;
       const btn = document.querySelector('.btn-acb-save');
       if (!btn) return;
-      const saves = getSaves();
-      const s = saves.find(x => x.id === activeClassId);
-      const savedRows = s ? s.rows || [] : [];
-      const same = JSON.stringify(getCurrentRows()) === JSON.stringify(savedRows);
+      let savedSnapshot = activeClassSnapshot;
+      if (savedSnapshot === null) {
+        const saves = getSaves();
+        const s = saves.find(x => x.id === activeClassId);
+        savedSnapshot = s ? JSON.stringify(s.rows || []) : '[]';
+        activeClassSnapshot = savedSnapshot;
+      }
+      const same = JSON.stringify(getCurrentRows()) === savedSnapshot;
       if (same) {
         btn.textContent = 'Saved';
         btn.classList.add('is-saved');
@@ -5772,7 +6176,7 @@
       }
       if (current && current.parentFolderId) {
         html += `<div class="move-dropdown-divider"></div>
-          <div class="move-dropdown-item remove-from-folder" onclick="moveFolderTo('${folderId}',null)">✕ Remove from folder</div>`;
+          <div class="move-dropdown-item remove-from-folder" onclick="moveFolderTo('${folderId}',null)">${ICON_CLOSE_SVG}<span>Remove from folder</span></div>`;
       }
 
       const dropdown = document.createElement('div');
@@ -5802,7 +6206,7 @@
         <input type="text" id="toolbar-folder-name" placeholder="Folder name…" maxlength="48"
           onkeydown="if(event.key==='Enter')confirmToolbarFolder();if(event.key==='Escape')cancelToolbarFolder();" />
         <button class="btn-folder-create-confirm" onclick="confirmToolbarFolder()">Create</button>
-        <button class="btn-folder-create-cancel" onclick="cancelToolbarFolder()">✕</button>`;
+        <button class="btn-folder-create-cancel" onclick="cancelToolbarFolder()" aria-label="Cancel folder creation">${ICON_CLOSE_SVG}</button>`;
       list.prepend(row);
       row.querySelector('input').focus();
     }
@@ -5941,7 +6345,7 @@
         ).join('');
         if (s && s.folderId) {
           html += `<div class="move-dropdown-divider"></div>
-            <div class="move-dropdown-item remove-from-folder" onclick="moveSaveToFolder('${saveId}',null)">✕ Remove from folder</div>`;
+            <div class="move-dropdown-item remove-from-folder" onclick="moveSaveToFolder('${saveId}',null)">${ICON_CLOSE_SVG}<span>Remove from folder</span></div>`;
         }
       } else {
         html = `<div class="move-dropdown-item" style="pointer-events:none;color:var(--text-muted);">No folders yet</div>`;
@@ -5997,9 +6401,9 @@
         </div>
         <div class="save-item-actions">
           <button class="btn-load-save" onclick="loadSave('${s.id}')">Load</button>
-          <button class="btn-move-save" title="Move to folder" onclick="toggleMoveDropdown('${s.id}',this)">⤴</button>
-          <button class="btn-del-save" title="Rename" onclick="startRename('${s.id}')">✎</button>
-          <button class="btn-del-save" title="Delete" onclick="deleteSave('${s.id}')">✕</button>
+          <button class="btn-move-save" title="Move to folder" onclick="toggleMoveDropdown('${s.id}',this)">${ICON_MOVE_SVG}</button>
+          <button class="btn-del-save" title="Rename" onclick="startRename('${s.id}')">${ICON_RENAME_SVG}</button>
+          <button class="btn-del-save" title="Delete" onclick="deleteSave('${s.id}')">${ICON_CLOSE_SVG}</button>
         </div>
       </div>`;
     }
@@ -6018,18 +6422,18 @@
 
       return `<div class="folder-block" data-folder-id="${f.id}" style="${indent}">
         <div class="folder-header" onclick="toggleFolder(this)">
-          <span class="folder-chevron">▶</span>
+          <span class="folder-chevron">${ICON_CHEVRON_SVG}</span>
           ${FOLDER_TOGGLE_ICON_SVG}
           <span class="folder-name-display">${escHtml(f.name)}</span>
           <span class="folder-count">${totalCount}</span>
           <div class="folder-actions" onclick="event.stopPropagation()">
-            <button class="btn-folder-action" title="Move folder" onclick="toggleMoveFolderDropdown('${f.id}',this)">⤴</button>
-            <button class="btn-folder-action" title="Rename folder" onclick="startRenameFolder('${f.id}')">✎</button>
-            <button class="btn-folder-action danger" title="Delete folder" onclick="deleteFolder('${f.id}')">✕</button>
+            <button class="btn-folder-action" title="Move folder" onclick="toggleMoveFolderDropdown('${f.id}',this)">${ICON_MOVE_SVG}</button>
+            <button class="btn-folder-action" title="Rename folder" onclick="startRenameFolder('${f.id}')">${ICON_RENAME_SVG}</button>
+            <button class="btn-folder-action danger" title="Delete folder" onclick="deleteFolder('${f.id}')">${ICON_CLOSE_SVG}</button>
           </div>
         </div>
         <div class="folder-contents">
-          ${childrenHtml || '<div class="folder-empty">No courses yet. Use ⤴ to move courses here.</div>'}
+          ${childrenHtml || '<div class="folder-empty">No courses yet. Use the move button to place courses here.</div>'}
         </div>
       </div>`;
     }
@@ -6108,14 +6512,14 @@
 
           return `<div class="folder-block${isOpen ? ' open' : ''}" data-folder-id="${f.id}" style="${indent}">
             <div class="folder-header" onclick="toggleFolder(this)">
-              <span class="folder-chevron">▶</span>
+              <span class="folder-chevron">${ICON_CHEVRON_SVG}</span>
               ${FOLDER_TOGGLE_ICON_SVG}
               <span class="folder-name-display">${escHtml(f.name)}</span>
               <span class="folder-count">${count}</span>
               <div class="folder-actions" onclick="event.stopPropagation()">
-                <button class="btn-folder-action" title="Move folder" onclick="toggleMoveFolderDropdown('${f.id}',this)">⤴</button>
-                <button class="btn-folder-action" title="Rename folder" onclick="startRenameFolder('${f.id}')">✎</button>
-                <button class="btn-folder-action danger" title="Delete folder" onclick="deleteFolder('${f.id}')">✕</button>
+                <button class="btn-folder-action" title="Move folder" onclick="toggleMoveFolderDropdown('${f.id}',this)">${ICON_MOVE_SVG}</button>
+                <button class="btn-folder-action" title="Rename folder" onclick="startRenameFolder('${f.id}')">${ICON_RENAME_SVG}</button>
+                <button class="btn-folder-action danger" title="Delete folder" onclick="deleteFolder('${f.id}')">${ICON_CLOSE_SVG}</button>
               </div>
             </div>
             <div class="folder-contents">${childHtml || '<div class="folder-empty">Empty folder</div>'}</div>
@@ -6334,27 +6738,26 @@
       // Delete bg (shown during swipe)
       const bg = document.createElement('div');
       bg.className = 'swipe-delete-bg';
-      bg.innerHTML = '<span class="swipe-icon">🗑</span>';
+      bg.innerHTML = `<span class="swipe-icon">${ICON_TRASH_SVG}</span>`;
       wrapper.appendChild(bg);
 
       const div = document.createElement('div');
       div.className = 'row';
       div.id = `row-${id}`;
       div.innerHTML = `
-        <textarea placeholder="${getNamePlaceholder()}" class="name-input" rows="1" onblur="pushUndo();autosave();" oninput="autosave();resizeName(this)" onkeydown="if(event.key==='Enter'){event.preventDefault();}">${escHtml(name)}</textarea>
+        <textarea placeholder="${getNamePlaceholder()}" class="name-input" rows="1" onblur="pushUndo();autosave();" oninput="autosave();scheduleResizeName(this)" onkeydown="if(event.key==='Enter'){event.preventDefault();}">${escHtml(name)}</textarea>
         <div class="input-wrap">
-          <input type="text" inputmode="decimal" placeholder="0" class="weight-input${weight ? ' has-value' : ''}" min="0" max="100" value="${weight}" oninput="onWeightInput(this); updateWeightBar()" onblur="pushUndo(); sanitizeNumericInput(this)" />
+          <input type="text" inputmode="decimal" placeholder="0" class="weight-input${weight ? ' has-value' : ''}" min="0" max="100" value="${weight}" oninput="onWeightInput(this)" onblur="pushUndo(); sanitizeNumericInput(this); updateWeightBar()" />
           <span class="suffix">%</span>
         </div>
         <div class="input-wrap">
           <input type="text" inputmode="decimal" placeholder="—" class="grade-input${grade ? ' has-value' : ''}" min="0" max="100" value="${grade}" oninput="onGradeInput(this)" onblur="pushUndo(); sanitizeNumericInput(this)" />
           <span class="suffix">%</span>
         </div>
-        <button class="del-btn" onclick="deleteRow(${id})" title="Remove">×</button>
+        <button class="del-btn" onclick="deleteRow(${id})" title="Remove">${ICON_CLOSE_SVG}</button>
       `;
       wrapper.appendChild(div);
       container.appendChild(wrapper);
-      updateWeightBar();
       attachNavigation(div);
       attachSwipe(wrapper, id);
       const nameEl = div.querySelector('.name-input');
@@ -6457,7 +6860,7 @@
     function onWeightInput(el) {
       sanitizeNumericInput(el);
       el.classList.toggle('has-value', el.value !== '');
-      updateWeightBar();
+      scheduleWeightBarUpdate();
       markStale();
       autosave();
     }
@@ -6500,13 +6903,17 @@
 
     function getRows() {
       const rows = document.querySelectorAll('.row');
-      return Array.from(rows).map(row => ({
-        name: getNameValue(row) || 'Untitled',
-        weight: parseFloat(row.querySelector('.weight-input').value) || 0,
-        // blank grade = null (not yet done); entered grade (even 0) = number
-        gradeRaw: row.querySelector('.grade-input').value,
-        grade: row.querySelector('.grade-input').value === '' ? null : parseFloat(row.querySelector('.grade-input').value)
-      })).filter(r => r.weight > 0);
+      const parsed = Array.from(rows).map(row => {
+        const weightValue = row.querySelector('.weight-input').value;
+        const gradeValue = row.querySelector('.grade-input').value;
+        return {
+          name: getNameValue(row) || 'Untitled',
+          weight: parseFloat(weightValue) || 0,
+          gradeRaw: gradeValue,
+          grade: gradeValue === '' ? null : parseFloat(gradeValue)
+        };
+      });
+      return parsed.filter(r => r.weight > 0);
     }
 
     // Returns rows padded with a phantom ungraded row for any missing weight up to 100.
@@ -6620,6 +7027,15 @@
       label.textContent = total.toFixed(1) + '%';
     }
 
+    let weightBarFrame = null;
+    function scheduleWeightBarUpdate() {
+      if (weightBarFrame) return;
+      weightBarFrame = requestAnimationFrame(() => {
+        weightBarFrame = null;
+        updateWeightBar();
+      });
+    }
+
     function showError(msg, shakeBtn) {
       const el = document.getElementById('error-msg');
       el.textContent = msg;
@@ -6728,7 +7144,14 @@
             </div>
             <button class="btn-share" id="share-btn" onclick="shareResults()"><svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><rect x="2.5" y="4.5" width="9" height="10" rx="1.5" stroke="currentColor" stroke-width="1.4"/><path d="M5 4.5V3.5A1.5 1.5 0 0 1 6.5 2h3A1.5 1.5 0 0 1 11 3.5v1" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/><path d="M5.5 8.5h5M5.5 11h3" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg><span id="share-btn-label">Copy Grade Summary</span></button>
           </div>`;
-      setTimeout(() => document.getElementById('results').scrollIntoView({ behavior: 'smooth', block: 'start' }), 150);
+      setTimeout(scrollResultsIntoView, 150);
+    }
+
+    function scrollResultsIntoView() {
+      const results = document.getElementById('results');
+      if (!results) return;
+      const prefersReduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      results.scrollIntoView({ behavior: (PERF_LITE || prefersReduced) ? 'auto' : 'smooth', block: 'start' });
     }
 
     // ── Passing Summary Copy ─────────────────────────────────────────
@@ -6770,8 +7193,8 @@
     function buildPassingSummary(target, neededAvg, currentGrade, gradedWeight, ungraded) {
       const courseName = getActiveCourseName();
       const header = courseName
-        ? `📋 What Do I Need to Pass? — ${courseName}`
-        : `📋 What Do I Need to Pass?`;
+        ? `What Do I Need to Pass? — ${courseName}`
+        : `What Do I Need to Pass?`;
       let text = header + '\n\n';
       text += `▸ Passing grade: ${target}%\n`;
       if (neededAvg <= 0) {
@@ -6882,7 +7305,7 @@
         passBtn.onclick = () => openPassCopyModal(_sum);
       }
 
-      setTimeout(() => document.getElementById('results').scrollIntoView({ behavior: 'smooth', block: 'start' }), 150);
+      setTimeout(scrollResultsIntoView, 150);
     }
 
     function openPassModal() {
@@ -6965,8 +7388,8 @@
           const _target = target;
           _btn.onclick = () => openPassCopyModal(
             actual >= target
-              ? '📋 Passing Summary\nFinal Grade: ' + actual.toFixed(2) + '%\nStatus: Passed! Meets the ' + target + '% requirement.\n\nCalculated with coursegradecalculator.com'
-              : '📋 Passing Summary\nFinal Grade: ' + actual.toFixed(2) + '%\nStatus: Did not meet the ' + target + '% requirement.\n\nCalculated with coursegradecalculator.com'
+              ? 'Passing Summary\nFinal Grade: ' + actual.toFixed(2) + '%\nStatus: Passed! Meets the ' + target + '% requirement.\n\nCalculated with coursegradecalculator.com'
+              : 'Passing Summary\nFinal Grade: ' + actual.toFixed(2) + '%\nStatus: Did not meet the ' + target + '% requirement.\n\nCalculated with coursegradecalculator.com'
           );
         }
         return;
@@ -7038,6 +7461,8 @@
     // ── Confetti ─────────────────────────────────────────────────────
     let confettiRunning = false;
     function launchConfetti() {
+      const prefersReduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      if (prefersReduced) return;
       if (confettiRunning) return;
       confettiRunning = true;
       const canvas = document.getElementById('confetti-canvas');
@@ -7045,7 +7470,7 @@
       canvas.width  = window.innerWidth;
       canvas.height = window.innerHeight;
       const colors = [getComputedStyle(document.documentElement).getPropertyValue('--accent').trim() || DEFAULT_ACCENT,'#1a7a4a','#e8a020','#e03e3e','#9b59b6','#f39c12','#1abc9c'];
-      const pieces = Array.from({ length: 140 }, () => ({
+      const pieces = Array.from({ length: PERF_LITE ? 70 : 140 }, () => ({
         x: Math.random() * canvas.width, y: Math.random() * -canvas.height,
         w: 6 + Math.random() * 8, h: 10 + Math.random() * 6,
         color: colors[Math.floor(Math.random() * colors.length)],
@@ -7053,11 +7478,11 @@
         vx: (Math.random() - 0.5) * 3, vy: 2 + Math.random() * 4,
         vr: (Math.random() - 0.5) * 0.2,
       }));
-      const duration = 3500, start = performance.now();
+      const duration = PERF_LITE ? 1800 : 3500, start = performance.now();
       function draw(now) {
         const elapsed = now - start;
         ctx.clearRect(0, 0, canvas.width, canvas.height);
-        ctx.globalAlpha = Math.max(0, 1 - (elapsed - 2500) / 1000);
+        ctx.globalAlpha = Math.max(0, 1 - (elapsed - (duration - 1000)) / 1000);
         pieces.forEach(p => {
           p.x += p.vx; p.y += p.vy; p.rot += p.vr;
           ctx.save(); ctx.translate(p.x, p.y); ctx.rotate(p.rot);
@@ -7114,8 +7539,8 @@
 
       const courseName = getActiveCourseName();
       const header = courseName
-        ? `📋 Grade Summary — ${courseName}`
-        : `📋 Grade Summary`;
+        ? `Grade Summary — ${courseName}`
+        : `Grade Summary`;
 
       let text = header + '\n\n';
       text += `▸ Current Grade (${pctComplete}% Complete): ${currentGrade.toFixed(2)}%\n`;
@@ -7194,7 +7619,6 @@
       if (parts.length > 2) val = parts[0] + '.' + parts.slice(1).join('');
       if (val !== el.value) {
         el.value = val;
-        el.dispatchEvent(new Event('input'));
       }
     }
 
@@ -7264,10 +7688,10 @@
 
   <!-- Share Modal -->
   <div class="share-modal-overlay" id="share-modal-overlay" onclick="if(event.target===this)closeShareModal()" onkeydown="handleShareModalKeydown(event)">
-    <div class="share-modal">
-      <div class="share-modal-header">
-        <div class="share-modal-title">📋 Copy Grade Summary</div>
-        <button class="share-modal-close" onclick="closeShareModal()" aria-label="Close">✕</button>
+      <div class="share-modal">
+        <div class="share-modal-header">
+        <div class="share-modal-title"><svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><rect x="2.5" y="4.5" width="9" height="10" rx="1.5" stroke="currentColor" stroke-width="1.4"/><path d="M5 4.5V3.5A1.5 1.5 0 0 1 6.5 2h3A1.5 1.5 0 0 1 11 3.5v1" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/><path d="M5.5 8.5h5M5.5 11h3" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg><span>Copy Grade Summary</span></div>
+        <button class="share-modal-close" onclick="closeShareModal()" aria-label="Close"><svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="m4.5 4.5 7 7M11.5 4.5l-7 7" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg></button>
       </div>
       <hr class="share-modal-divider" />
       <div class="share-modal-body">
