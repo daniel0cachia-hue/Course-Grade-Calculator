@@ -2528,10 +2528,79 @@
       border-radius: 8px;
       background: transparent;
       align-items: center;
+      position: relative;
     }
 
     .row:hover {
       background: var(--surface2);
+    }
+
+    .row-drag-handle {
+      position: absolute;
+      left: 7px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 28px;
+      height: 28px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid transparent;
+      border-radius: 8px;
+      background: transparent;
+      color: var(--text-muted);
+      cursor: grab;
+      touch-action: none;
+      z-index: 3;
+      opacity: 0.68;
+    }
+
+    .row-drag-handle svg {
+      width: 15px;
+      height: 15px;
+      display: block;
+    }
+
+    .row:hover .row-drag-handle,
+    .row-drag-handle:focus-visible {
+      opacity: 1;
+      color: var(--accent);
+      border-color: var(--border);
+      background: var(--surface);
+      outline: none;
+    }
+
+    .row-drag-handle:active {
+      cursor: grabbing;
+    }
+
+    .row .name-input {
+      padding-left: 42px;
+    }
+
+    body.row-drag-active {
+      user-select: none;
+      cursor: grabbing;
+    }
+
+    .row-swipe-wrapper.row-dragging {
+      opacity: 1;
+      z-index: 9999;
+      pointer-events: none;
+    }
+
+    .row-swipe-wrapper.row-dragging .row {
+      background: var(--accent-dim);
+      border-radius: 8px;
+      box-shadow: inset 0 0 0 2px var(--accent), 0 18px 34px rgba(5, 25, 46, 0.16);
+      transform: scale(1.01);
+    }
+
+    .row-drag-placeholder {
+      border: 2px dashed var(--accent);
+      border-radius: 8px;
+      background: var(--accent-dim);
+      opacity: 0.72;
     }
 
     .row input,
@@ -5490,7 +5559,7 @@
 
         <section class="help-section">
           <h3>Calculating Your Grade</h3>
-          <p>Fill in each assignment name, weight, and grade, then click <strong>Calculate Grade</strong>. If some grades are blank, the results show your current grade based on completed work, the minimum final grade if remaining work scores 0%, and a full grade breakdown.</p>
+          <p>Fill in each assignment name, weight, and grade, then click <strong>Calculate Grade</strong>. Assignment names wrap as needed, and you can drag the grip handle on any row to reorder assignments before or after typing in them. If some grades are blank, the results show your current grade based on completed work, the minimum final grade if remaining work scores 0%, and a full grade breakdown.</p>
           <p style="margin-top:8px;">If every grade is entered, the duplicate minimum card is hidden and the button changes from <strong>What Do I Need to Pass?</strong> to <strong>Did I Pass My Class?</strong>. The popup checks your final grade against the target you type.</p>
           <p style="margin-top:8px;">The <em>What do I need to get a __% ?</em> box updates live and shows the average needed on remaining assignments. Use the copy buttons to copy either a grade summary or passing summary.</p>
         </section>
@@ -5535,6 +5604,10 @@
             <div class="key-row">
               <div class="keys icon-key"><svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M8 3v10M3 8h10" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></div>
               <div class="key-desc"><strong>Add Assignment</strong> - appends a new blank row to the table.</div>
+            </div>
+            <div class="key-row">
+              <div class="keys icon-key"><svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><circle cx="5.2" cy="4" r="1" fill="currentColor"/><circle cx="10.8" cy="4" r="1" fill="currentColor"/><circle cx="5.2" cy="8" r="1" fill="currentColor"/><circle cx="10.8" cy="8" r="1" fill="currentColor"/><circle cx="5.2" cy="12" r="1" fill="currentColor"/><circle cx="10.8" cy="12" r="1" fill="currentColor"/></svg></div>
+              <div class="key-desc"><strong>Reorder row</strong> - drag the grip handle on any assignment row to move it above or below another row. This works before or after you type in the row.</div>
             </div>
             <div class="key-row">
               <div class="keys icon-key"><svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="m4.5 4.5 7 7M11.5 4.5l-7 7" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg></div>
@@ -5706,6 +5779,19 @@
         resizeName(el);
       });
     }
+
+    let resizeAllNamesPending = false;
+    function scheduleResizeAllNames() {
+      if (resizeAllNamesPending) return;
+      resizeAllNamesPending = true;
+      requestAnimationFrame(() => {
+        resizeAllNamesPending = false;
+        document.querySelectorAll('.name-input').forEach(resizeName);
+      });
+    }
+
+    window.addEventListener('resize', scheduleResizeAllNames);
+    window.addEventListener('orientationchange', scheduleResizeAllNames);
 
     function getNameValue(row) {
       const el = row.querySelector('.name-input');
@@ -6773,6 +6859,122 @@
       wrapperEl.addEventListener('touchcancel', onEnd);
     }
 
+    // Drag assignment rows by the small grip handle without changing table data.
+    function attachRowReorder(wrapperEl) {
+      const handle = wrapperEl.querySelector('.row-drag-handle');
+      const container = document.getElementById('rows-container');
+      if (!handle || !container) return;
+
+      let startY = 0;
+      let grabOffsetY = 0;
+      let startIndex = -1;
+      let dragging = false;
+      let pointerId = null;
+      let placeholder = null;
+
+      function getWrapperIndex(el) {
+        return Array.from(container.querySelectorAll('.row-swipe-wrapper')).indexOf(el);
+      }
+
+      function getDragAfterElement(y) {
+        const wrappers = Array.from(container.querySelectorAll('.row-swipe-wrapper:not(.row-dragging):not(.row-drag-placeholder)'));
+        return wrappers.reduce((closest, child) => {
+          const box = child.getBoundingClientRect();
+          const offset = y - box.top - box.height / 2;
+          if (offset < 0 && offset > closest.offset) {
+            return { offset, element: child };
+          }
+          return closest;
+        }, { offset: Number.NEGATIVE_INFINITY, element: null }).element;
+      }
+
+      function beginDrag() {
+        if (dragging) return;
+        dragging = true;
+        pushUndo();
+        const rect = wrapperEl.getBoundingClientRect();
+        placeholder = document.createElement('div');
+        placeholder.className = 'row-drag-placeholder';
+        placeholder.style.height = `${rect.height}px`;
+        wrapperEl.parentNode.insertBefore(placeholder, wrapperEl);
+        Object.assign(wrapperEl.style, {
+          position: 'fixed',
+          left: `${rect.left}px`,
+          top: `${rect.top}px`,
+          width: `${rect.width}px`
+        });
+        wrapperEl.classList.add('row-dragging');
+        document.body.classList.add('row-drag-active');
+      }
+
+      function onPointerMove(e) {
+        if (pointerId !== e.pointerId) return;
+        if (!dragging && Math.abs(e.clientY - startY) > 5) beginDrag();
+        if (!dragging) return;
+
+        e.preventDefault();
+        wrapperEl.style.top = `${e.clientY - grabOffsetY}px`;
+        const after = getDragAfterElement(e.clientY);
+        if (after == null) {
+          container.appendChild(placeholder);
+        } else {
+          container.insertBefore(placeholder, after);
+        }
+      }
+
+      function finishDrag(e) {
+        if (pointerId !== null && e.pointerId !== pointerId) return;
+        try {
+          if (pointerId !== null) handle.releasePointerCapture?.(pointerId);
+        } catch (err) {}
+
+        document.removeEventListener('pointermove', onPointerMove);
+        document.removeEventListener('pointerup', finishDrag);
+        document.removeEventListener('pointercancel', finishDrag);
+
+        if (placeholder && placeholder.parentNode) {
+          placeholder.parentNode.insertBefore(wrapperEl, placeholder);
+        }
+
+        pointerId = null;
+        wrapperEl.classList.remove('row-dragging');
+        document.body.classList.remove('row-drag-active');
+        Object.assign(wrapperEl.style, {
+          position: '',
+          left: '',
+          top: '',
+          width: ''
+        });
+        if (placeholder) placeholder.remove();
+
+        const moved = dragging && getWrapperIndex(wrapperEl) !== startIndex;
+        placeholder = null;
+        dragging = false;
+
+        if (moved) {
+          markStale();
+          updateWeightBar();
+          updatePassButton();
+          autosave();
+        }
+      }
+
+      handle.addEventListener('pointerdown', (e) => {
+        if (e.button !== undefined && e.button !== 0) return;
+        e.preventDefault();
+        e.stopPropagation();
+        pointerId = e.pointerId;
+        startY = e.clientY;
+        startIndex = getWrapperIndex(wrapperEl);
+        const rect = wrapperEl.getBoundingClientRect();
+        grabOffsetY = e.clientY - rect.top;
+        handle.setPointerCapture?.(pointerId);
+        document.addEventListener('pointermove', onPointerMove, { passive: false });
+        document.addEventListener('pointerup', finishDrag);
+        document.addEventListener('pointercancel', finishDrag);
+      });
+    }
+
     function toggleCustomize() {
       document.getElementById('customize-panel').classList.toggle('open');
     }
@@ -6891,6 +7093,16 @@
       div.className = 'row';
       div.id = `row-${id}`;
       div.innerHTML = `
+        <button class="row-drag-handle" type="button" title="Drag to reorder assignment" aria-label="Drag to reorder assignment">
+          <svg viewBox="0 0 16 16" fill="none" aria-hidden="true">
+            <circle cx="5.2" cy="4" r="1" fill="currentColor"/>
+            <circle cx="10.8" cy="4" r="1" fill="currentColor"/>
+            <circle cx="5.2" cy="8" r="1" fill="currentColor"/>
+            <circle cx="10.8" cy="8" r="1" fill="currentColor"/>
+            <circle cx="5.2" cy="12" r="1" fill="currentColor"/>
+            <circle cx="10.8" cy="12" r="1" fill="currentColor"/>
+          </svg>
+        </button>
         <textarea placeholder="${getNamePlaceholder()}" class="name-input" rows="1" onblur="pushUndo();autosave();" oninput="autosave();scheduleResizeName(this)" onkeydown="if(event.key==='Enter'){event.preventDefault();}">${escHtml(name)}</textarea>
         <div class="input-wrap">
           <input type="text" inputmode="decimal" placeholder="0" class="weight-input${weight ? ' has-value' : ''}" min="0" max="100" value="${weight}" oninput="onWeightInput(this)" onblur="pushUndo(); sanitizeNumericInput(this); updateWeightBar()" />
@@ -6906,6 +7118,7 @@
       container.appendChild(wrapper);
       attachNavigation(div);
       attachSwipe(wrapper, id);
+      attachRowReorder(wrapper);
       const nameEl = div.querySelector('.name-input');
       if (nameEl) resizeName(nameEl);
     }
