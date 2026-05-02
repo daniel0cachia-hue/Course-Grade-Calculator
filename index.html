@@ -2253,8 +2253,32 @@
       font-weight: 700;
     }
 
+    .btn-share-calculator {
+      background: #ffffff;
+      border-color: var(--border);
+      color: var(--text);
+      min-width: 172px;
+      justify-content: center;
+      gap: 10px;
+      font-weight: 700;
+    }
+
+    .header-controls .btn-share-calculator {
+      min-width: 172px;
+      width: auto;
+      height: 38px;
+      padding: 8px 12px;
+      border-radius: 16px;
+      flex: 0 0 auto;
+    }
+
+    .header-controls .btn-share-calculator span {
+      display: inline;
+    }
+
     .btn-save-courses .save-icon,
-    .btn-view-courses .save-icon {
+    .btn-view-courses .save-icon,
+    .btn-share-calculator .share-site-icon {
       width: 16px;
       height: 16px;
       color: #545454;
@@ -2295,14 +2319,16 @@
       opacity: 1;
     }
 
-    .top-actions .btn-view-courses:hover {
+    .top-actions .btn-view-courses:hover,
+    .header-controls .btn-share-calculator:hover {
       background: var(--accent-dim);
       border-color: var(--accent);
       color: var(--accent);
     }
 
     .top-actions .btn-save-courses:hover .save-icon,
-    .top-actions .btn-view-courses:hover .save-icon {
+    .top-actions .btn-view-courses:hover .save-icon,
+    .header-controls .btn-share-calculator:hover .share-site-icon {
       color: var(--accent);
     }
 
@@ -3353,6 +3379,7 @@
 
     body.dark .top-actions .btn-save-courses:hover,
     body.dark .top-actions .btn-view-courses:hover,
+    body.dark .header-controls .btn-share-calculator:hover,
     body.dark .tb-btn.undo-btn.active:hover,
     body.dark .btn-secondary:hover,
     body.dark .btn-help-corner:hover,
@@ -3366,6 +3393,7 @@
 
     body.dark .top-actions .btn-save-courses:hover .save-icon,
     body.dark .top-actions .btn-view-courses:hover .save-icon,
+    body.dark .header-controls .btn-share-calculator:hover .share-site-icon,
     body.dark .tb-btn.undo-btn.active:hover svg,
     body.dark .add-row-btn:hover svg,
     body.dark .btn-share:hover svg,
@@ -3584,7 +3612,8 @@
     body.dark .course-folder-icon,
     body.dark .top-actions-right .icon-only-btn svg,
     body.dark .btn-save-courses .save-icon,
-    body.dark .btn-view-courses .save-icon {
+    body.dark .btn-view-courses .save-icon,
+    body.dark .btn-share-calculator .share-site-icon {
       color: #9cb2c8;
     }
 
@@ -4141,7 +4170,10 @@
       .accent-control {
         min-height: 36px;
         border-radius: 14px;
-        max-width: calc(100% - 42px);
+        flex: 0 1 auto;
+        width: fit-content;
+        min-width: 0;
+        max-width: calc(100% - 222px);
       }
 
       .accent-color-trigger {
@@ -4164,6 +4196,20 @@
         min-width: 36px;
         width: 36px;
         height: 36px;
+      }
+
+      .header-controls .btn-share-calculator {
+        min-width: 162px;
+        width: auto;
+        height: 36px;
+        padding: 0 10px;
+        border-radius: 12px;
+        flex: 0 0 auto;
+        font-size: 0.82rem;
+      }
+
+      .header-controls .btn-share-calculator span {
+        display: inline;
       }
 
       .top-actions {
@@ -4512,6 +4558,7 @@
     header h1,
     header h1 span {
       padding-left: 90px;
+      padding-right: 365px;
       min-height: 66px;
       font-size: clamp(2.2rem, 4.15vw, 3.55rem);
       line-height: 0.98;
@@ -4545,6 +4592,27 @@
       color: transparent;
     }
 
+    @media (max-width: 1120px) and (min-width: 981px) {
+      header {
+        padding-bottom: 84px;
+      }
+
+      header h1,
+      header h1 span {
+        padding-right: 0;
+        font-size: clamp(2.35rem, 5vw, 3.15rem);
+        white-space: nowrap;
+      }
+
+      .header-controls {
+        left: 28px;
+        right: auto;
+        top: auto;
+        bottom: 18px;
+        transform: none;
+      }
+    }
+
     @media (max-width: 980px) {
       .header-favicon {
         width: 60px;
@@ -4554,9 +4622,10 @@
       header h1,
       header h1 span {
         padding-left: 80px;
+        padding-right: 0;
         min-height: 60px;
         font-size: clamp(1.9rem, 6.2vw, 2.85rem);
-        white-space: normal;
+        white-space: nowrap;
       }
     }
 
@@ -4725,10 +4794,12 @@
       header h1,
       header h1 span {
         padding-left: 68px;
+        padding-right: 0;
         min-height: 56px;
         font-size: clamp(1.45rem, 7.1vw, 1.95rem);
         line-height: 1.02;
         letter-spacing: -0.015em;
+        white-space: normal;
       }
 
       #active-class-banner {
@@ -4839,18 +4910,56 @@
 
     @media (max-width: 560px) {
       header {
-        padding-bottom: 60px;
+        padding-bottom: 58px;
       }
 
       .header-controls {
-        top: 76px;
+        top: 72px;
       }
 
     }
 
+    @media (max-width: 480px) {
+      header {
+        padding-bottom: 72px;
+      }
+
+      .header-controls {
+        top: 86px;
+      }
+
+      .accent-control {
+        max-width: calc(100% - 210px);
+      }
+
+      .header-controls .btn-share-calculator {
+        min-width: 150px;
+        padding: 0 8px;
+        font-size: 0.78rem;
+      }
+    }
+
+    @media (max-width: 410px) {
+      .header-controls .btn-share-calculator {
+        min-width: 36px;
+        width: 36px;
+        padding: 0;
+        flex-basis: 36px;
+        font-size: 0;
+      }
+
+      .header-controls .btn-share-calculator span {
+        display: none;
+      }
+
+      .accent-control {
+        max-width: calc(100% - 90px);
+      }
+    }
+
     @media (max-width: 360px) {
       header {
-        padding: 12px 12px 52px;
+        padding: 12px 12px 64px;
       }
 
       .header-favicon {
@@ -4869,7 +4978,7 @@
       .header-controls {
         left: 12px;
         right: 12px;
-        top: 72px;
+        top: 80px;
         width: calc(100% - 24px);
       }
 
@@ -5195,6 +5304,7 @@
         <span class="accent-divider" aria-hidden="true"></span>
         <button class="accent-reset-btn" id="accent-reset-btn" onclick="resetColors()" title="Reset accent color" aria-label="Reset accent color" style="display:none;"></button>
       </div>
+      <button class="tb-btn btn-share-calculator" onclick="copyCalculatorShare()" title="Share Calculator" aria-label="Share Calculator"><svg class="share-site-icon" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><circle cx="4" cy="8" r="2" stroke="currentColor" stroke-width="1.5"/><circle cx="11.5" cy="4" r="2" stroke="currentColor" stroke-width="1.5"/><circle cx="11.5" cy="12" r="2" stroke="currentColor" stroke-width="1.5"/><path d="M5.8 7.1 9.7 5M5.8 8.9l3.9 2.1" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg><span>Share Calculator</span></button>
     </div>
   </header>
 
@@ -5274,7 +5384,8 @@
       <h2>How to Use the Course Grade Calculator</h2>
       <p>Enter each of your assignments, exams, or grade categories along with their weight (how much they count toward your final grade) and the score you received. Weights should add up to 100%, but if you haven't entered everything yet, the calculator automatically assumes the rest of your class makes up the difference.</p>
       <p>Hit <strong>Calculate Grade</strong> to see your current standing. If you have ungraded work remaining, you'll also see your current performance on graded work only so you always know exactly where you stand. Use <strong>What Do I Need to Pass?</strong> to find out the average score you need on remaining assignments to hit your target grade.</p>
-      <p>Use <strong>Save Course</strong> to store the setup currently in your table, and <strong>My Courses</strong> to browse, organize, sort, and reload saved courses whenever grades come in. <strong>Sort By</strong> changes the order of top-level folders and classes not inside folders; items inside a folder stay ordered by most recent activity so the thing you just edited rises to the top of that folder.</p>
+      <p>Use <strong>Save Course</strong> to store the setup currently in your table, and <strong>My Courses</strong> to browse, organize, sort, and reload saved courses whenever grades come in. <strong>Sort By</strong> changes the order of top-level folders and classes not inside folders; items inside a folder stay ordered by most recent activity so the thing you just edited or loaded rises to the top of that folder.</p>
+      <p>Use <strong>Share Calculator</strong> to copy a short message and the website link so you can send the calculator to someone else.</p>
     </section>
   </div>
 
@@ -5449,12 +5560,16 @@
               <div class="keys icon-key has-text"><svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><rect x="2.5" y="4.5" width="9" height="10" rx="1.5" stroke="currentColor" stroke-width="1.4"/><path d="M5 4.5V3.5A1.5 1.5 0 0 1 6.5 2h3A1.5 1.5 0 0 1 11 3.5v1" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/><path d="M5.5 8.5h5M5.5 11h3" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg><span>Copy</span></div>
               <div class="key-desc">Copies the grade breakdown or passing summary so you can paste it elsewhere.</div>
             </div>
+            <div class="key-row">
+              <div class="keys icon-key has-text"><svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><circle cx="4" cy="8" r="2" stroke="currentColor" stroke-width="1.5"/><circle cx="11.5" cy="4" r="2" stroke="currentColor" stroke-width="1.5"/><circle cx="11.5" cy="12" r="2" stroke="currentColor" stroke-width="1.5"/><path d="M5.8 7.1 9.7 5M5.8 8.9l3.9 2.1" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg><span>Share Calculator</span></div>
+              <div class="key-desc">Copies a short website description and link to share Course Grade Calculator with someone else.</div>
+            </div>
           </div>
         </section>
 
         <section class="help-section">
           <h3>Saving Courses</h3>
-          <p>Click <strong>Save Course</strong> to store the setup currently in your table, or <strong>My Courses</strong> to open the course manager. It stores assignment names, weights, grades, folder location, and the active-course editing state. When you rename a saved class or folder, or save table edits, that item moves to the top of its folder.</p>
+          <p>Click <strong>Save Course</strong> to store the setup currently in your table, or <strong>My Courses</strong> to open the course manager. It stores assignment names, weights, grades, folder location, and the active-course editing state. When you rename a saved class or folder, save table edits, or load a class inside a folder, that item moves to the top of its folder.</p>
           <div class="key-grid" style="margin-top:10px;">
             <div class="key-row">
               <div class="keys icon-key has-text"><svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M1.8 4.4c0-.66.54-1.2 1.2-1.2H6.1l1.2 1.4H13c.66 0 1.2.54 1.2 1.2v5.8c0 .66-.54 1.2-1.2 1.2H3c-.66 0-1.2-.54-1.2-1.2V4.4Z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg><span>Load</span></div>
@@ -5809,12 +5924,33 @@
     }
 
     function saveActivityTime(save) {
-      return saveUpdatedTime(save) || saveAddedToFolderTime(save);
+      const lastLoadedAt = Number(save && save.lastLoadedAt);
+      const updatedAt = saveUpdatedTime(save);
+      const addedAt = saveAddedToFolderTime(save);
+      return Math.max(
+        Number.isFinite(lastLoadedAt) && lastLoadedAt > 0 ? lastLoadedAt : 0,
+        Number.isFinite(updatedAt) && updatedAt > 0 ? updatedAt : 0,
+        Number.isFinite(addedAt) && addedAt > 0 ? addedAt : 0
+      );
+    }
+
+    function folderNestedActivityTime(folder, allFolders = getFolders(), allSaves = getSaves(), seen = new Set()) {
+      if (!folder || seen.has(folder.id)) return 0;
+      seen.add(folder.id);
+      const ownActivity = folderActivityTime(folder);
+      const directSaveActivity = allSaves
+        .filter(save => (save.folderId || null) === folder.id)
+        .reduce((max, save) => Math.max(max, saveActivityTime(save)), 0);
+      const childFolderActivity = allFolders
+        .filter(child => (child.parentFolderId || null) === folder.id)
+        .reduce((max, child) => Math.max(max, folderNestedActivityTime(child, allFolders, allSaves, seen)), 0);
+      seen.delete(folder.id);
+      return Math.max(ownActivity, directSaveActivity, childFolderActivity);
     }
 
     function sortSavesNewestFirst(saves) {
       return saves.slice().sort((a, b) =>
-        (saveAddedToFolderTime(b) - saveAddedToFolderTime(a)) ||
+        (saveActivityTime(b) - saveActivityTime(a)) ||
         (a.name || '').localeCompare(b.name || '', undefined, { sensitivity: 'base', numeric: true })
       );
     }
@@ -5857,9 +5993,9 @@
       });
     }
 
-    function sortFolderContents(childFolders, saves) {
+    function sortFolderContents(childFolders, saves, allFolders = getFolders(), allSaves = getSaves()) {
       return [
-        ...childFolders.map(item => ({ type: 'folder', item, time: folderActivityTime(item), name: item.name || '' })),
+        ...childFolders.map(item => ({ type: 'folder', item, time: folderNestedActivityTime(item, allFolders, allSaves), name: item.name || '' })),
         ...saves.map(item => ({ type: 'save', item, time: saveActivityTime(item), name: item.name || '' }))
       ].sort((a, b) =>
         (b.time - a.time) ||
@@ -5867,8 +6003,8 @@
       );
     }
 
-    function renderFolderChildren(childFolders, saves, renderChildFolder) {
-      return sortFolderContents(childFolders, saves).map(entry =>
+    function renderFolderChildren(childFolders, saves, renderChildFolder, allFolders = getFolders(), allSaves = getSaves()) {
+      return sortFolderContents(childFolders, saves, allFolders, allSaves).map(entry =>
         entry.type === 'folder' ? renderChildFolder(entry.item) : renderSaveItem(entry.item)
       ).join('');
     }
@@ -5877,8 +6013,9 @@
       const normalizedParentId = parentId || null;
       const children = folders.filter(f => (f.parentFolderId || null) === normalizedParentId);
       if (!normalizedParentId) return sortFolders(children);
+      const saves = getSaves();
       return children.slice().sort((a, b) =>
-        (folderActivityTime(b) - folderActivityTime(a)) ||
+        (folderNestedActivityTime(b, folders, saves) - folderNestedActivityTime(a, folders, saves)) ||
         compareFolderNames(a, b)
       );
     }
@@ -6015,8 +6152,11 @@
 
     function loadSave(id) {
       const saves = getSaves();
-      const s = saves.find(x => x.id === id);
+      const idx = saves.findIndex(x => x.id === id);
+      const s = idx === -1 ? null : saves[idx];
       if (!s) return;
+      saves[idx] = { ...s, lastLoadedAt: Date.now() };
+      putSaves(saves);
       document.getElementById('rows-container').innerHTML = '';
       rowCount = 0;
       s.rows.forEach(r => addRow(r.name, r.weight, r.grade));
@@ -6417,7 +6557,9 @@
       const childrenHtml = renderFolderChildren(
         childFolders,
         items,
-        cf => renderFolderBlock(cf, saves, allFolders, depth + 1)
+        cf => renderFolderBlock(cf, saves, allFolders, depth + 1),
+        allFolders,
+        saves
       );
 
       return `<div class="folder-block" data-folder-id="${f.id}" style="${indent}">
@@ -6496,13 +6638,17 @@
             childHtml = renderFolderChildren(
               childFolders,
               directSaves,
-              cf => renderFolderBlock(cf, saves, folders, depth + 1)
+              cf => renderFolderBlock(cf, saves, folders, depth + 1),
+              folders,
+              saves
             );
           } else if (isOpen) {
             childHtml = renderFolderChildren(
               visibleChildFolders,
               visibleSaves,
-              cf => renderSearchFolder(cf, depth + 1)
+              cf => renderSearchFolder(cf, depth + 1),
+              folders,
+              saves
             );
           }
 
@@ -7179,6 +7325,17 @@
       ta.focus(); ta.select();
       document.execCommand('copy');
       document.body.removeChild(ta);
+    }
+
+    function copyCalculatorShare() {
+      const text = `Try out Course Grade Calculator!
+
+Easily learn what you need to pass your course!
+Save and organize your classes for when exam season gets busy!
+
+www.coursegradecalculator.com`;
+      copyToClipboard(text);
+      showCopiedModal('The calculator share message is ready to paste anywhere.');
     }
 
     function openPassCopyModal(text) {
