@@ -945,6 +945,54 @@
       background: var(--danger-dim);
     }
 
+    .help-search-wrap {
+      padding: 14px 24px 0;
+      flex-shrink: 0;
+    }
+
+    .help-search-box {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-height: 44px;
+      padding: 0 12px;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      transition: border-color 0.15s, background 0.15s, box-shadow 0.15s;
+    }
+
+    .help-search-box:focus-within {
+      border-color: var(--accent);
+      background: var(--accent-dim);
+      box-shadow: 0 0 0 3px var(--accent-glow);
+    }
+
+    .help-search-box svg {
+      width: 18px;
+      height: 18px;
+      color: var(--text-muted);
+      flex-shrink: 0;
+    }
+
+    .help-search-box input {
+      flex: 1;
+      min-width: 0;
+      border: 0;
+      outline: 0;
+      background: transparent;
+      color: var(--text);
+      font-family: var(--font-ui);
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    .help-search-box input::placeholder {
+      color: var(--text-muted);
+      opacity: 0.82;
+      font-weight: 600;
+    }
+
     .help-body {
       overflow-y: auto;
       padding: 20px 24px 24px;
@@ -972,6 +1020,17 @@
       font-size: 13px;
       color: var(--text-dim);
       line-height: 1.6;
+    }
+
+    .help-empty {
+      display: none;
+      padding: 16px;
+      border: 1px dashed var(--border);
+      border-radius: 10px;
+      color: var(--text-muted);
+      font-size: 13px;
+      font-weight: 700;
+      text-align: center;
     }
 
     .key-grid {
@@ -2150,6 +2209,16 @@
       color: var(--accent);
     }
 
+    .top-actions .tb-btn.undo-btn.active:hover {
+      background: var(--accent-dim);
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    .top-actions .tb-btn.undo-btn.active:hover svg {
+      color: var(--accent);
+    }
+
     body.help-open .btn-help-corner {
       display: none;
     }
@@ -2178,8 +2247,9 @@
     }
 
     .accent-control:hover {
-      background: var(--surface2);
-      border-color: var(--border);
+      background: var(--accent-dim);
+      border-color: var(--accent);
+      color: var(--accent);
       box-shadow: none;
     }
 
@@ -2194,11 +2264,24 @@
       white-space: nowrap;
     }
 
+    .accent-color-trigger .tb-label {
+      transition: color 0.15s ease;
+    }
+
+    .accent-control:hover .tb-label {
+      color: var(--accent);
+    }
+
     .accent-divider {
       align-self: stretch;
       width: 1px;
       background: var(--border);
       opacity: 0.9;
+    }
+
+    .accent-control:hover .accent-divider {
+      background: var(--accent);
+      opacity: 0.35;
     }
 
     .header-controls .accent-reset-btn {
@@ -2217,7 +2300,12 @@
     }
 
     .header-controls .accent-reset-btn:hover {
-      background: rgba(221, 225, 233, 0.45);
+      background: var(--accent-dim);
+      color: var(--accent);
+    }
+
+    .header-controls .accent-reset-btn:hover .accent-reset-icon {
+      color: var(--accent);
     }
 
     .theme-icon,
@@ -3542,8 +3630,28 @@
       background: var(--border);
     }
 
+    body.dark .accent-control:hover {
+      background: var(--accent-dim);
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    body.dark .accent-control:hover .tb-label {
+      color: var(--accent);
+    }
+
+    body.dark .accent-control:hover .accent-divider {
+      background: var(--accent);
+      opacity: 0.35;
+    }
+
     body.dark .header-controls .accent-reset-btn:hover {
-      background: rgba(255, 255, 255, 0.06);
+      background: var(--accent-dim);
+      color: var(--accent);
+    }
+
+    body.dark .header-controls .accent-reset-btn:hover .accent-reset-icon {
+      color: var(--accent);
     }
 
     body.dark .table-wrapper,
@@ -5522,7 +5630,7 @@
       <h2>How to Use the Course Grade Calculator</h2>
       <p>Enter each of your assignments, exams, or grade categories along with their weight (how much they count toward your final grade) and the score you received. Weights should add up to 100%, but if you haven't entered everything yet, the calculator automatically assumes the rest of your class makes up the difference.</p>
       <p>Hit <strong>Calculate Grade</strong> to see your current standing. If you have ungraded work remaining, you'll also see your current performance on graded work only so you always know exactly where you stand. Use <strong>What Do I Need to Pass?</strong> to find out the average score you need on remaining assignments to hit your target grade.</p>
-      <p>Use <strong>Save Course</strong> to store the setup currently in your table, and <strong>My Courses</strong> to browse, organize, sort, and reload saved courses whenever grades come in. <strong>Sort By</strong> changes the order of top-level folders and classes not inside folders; items inside a folder stay ordered by most recent activity so the thing you just edited or loaded rises to the top of that folder.</p>
+      <p>Use <strong>Save Course</strong> to store the setup currently in your table, and <strong>My Courses</strong> to browse, organize, sort, and reload saved courses whenever grades come in. <strong>Sort By</strong> changes the order of top-level folders and classes not inside folders; when a course inside nested folders is edited or loaded, its top-level folder counts as recently edited too.</p>
       <p>Use <strong>Share Calculator</strong> to copy a short message and the website link so you can send the calculator to someone else.</p>
     </section>
   </div>
@@ -5619,6 +5727,12 @@
       <div class="help-header">
         <h2 id="help-title">How to Use the Grade Calculator</h2>
         <button class="help-close" onclick="closeHelp()" aria-label="Close help"><svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="m4.5 4.5 7 7M11.5 4.5l-7 7" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg></button>
+      </div>
+      <div class="help-search-wrap">
+        <label class="help-search-box" for="help-search-input">
+          <svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><circle cx="7" cy="7" r="4.2" stroke="currentColor" stroke-width="1.5"/><path d="m10.2 10.2 3.1 3.1" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+          <input id="help-search-input" type="search" placeholder="Search help..." aria-label="Search help topics" oninput="filterHelp()">
+        </label>
       </div>
       <div class="help-body">
 
@@ -5734,7 +5848,7 @@
 
         <section class="help-section">
           <h3>Search &amp; Folders</h3>
-          <p>Use search in the course manager to find saved courses or folders. Searching a folder name shows that folder without opening it. Searching a course name opens whatever folders are needed so the matching course is visible. Use <strong>Sort By</strong> to order only top-level folders and classes not inside folders by recently edited, alphabetical, date added oldest, or date added newest. Contents inside folders automatically stay sorted by most recent activity.</p>
+          <p>Use search in the course manager to find saved courses or folders. Searching a folder name shows that folder without opening it. Searching a course name opens whatever folders are needed so the matching course is visible. Use <strong>Sort By</strong> to order only top-level folders and classes not inside folders by recently edited, alphabetical, date added oldest, or date added newest. Contents inside folders automatically stay sorted by most recent activity, and nested course activity also bumps the outermost folder when sorting by recently edited.</p>
           <div class="key-grid" style="margin-top:10px;">
             <div class="key-row">
               <div class="keys icon-key has-text"><svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M1.8 4.4c0-.66.54-1.2 1.2-1.2H6.1l1.2 1.4H13c.66 0 1.2.54 1.2 1.2v5.8c0 .66-.54 1.2-1.2 1.2H3c-.66 0-1.2-.54-1.2-1.2V4.4Z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/><path d="M8 7.1v4.2M5.9 9.2h4.2" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg><span>Folder</span></div>
@@ -5742,7 +5856,7 @@
             </div>
             <div class="key-row">
               <div class="keys icon-key has-text"><svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 3h8M5.5 8h5M7 13h2" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg><span>Sort</span></div>
-              <div class="key-desc">Changes the order of top-level folders and classes not inside folders. It does not override the inside of a folder, where recently edited classes and folders move to the top.</div>
+              <div class="key-desc">Changes the order of top-level folders and classes not inside folders. Recently edited includes activity inside nested folders, while each folder still keeps its own contents sorted by most recent activity.</div>
             </div>
             <div class="key-row">
               <div class="keys icon-key"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M6 18c6.4-.45 10.35-4.25 10.8-10.8" stroke="currentColor" stroke-width="2.1" stroke-linecap="round"/><path d="M13.4 8.4 17 6.6l1.8 3.6" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
@@ -5767,6 +5881,8 @@
           </div>
         </section>
 
+        <div id="help-empty" class="help-empty">No help topics found.</div>
+
       </div>
     </div>
   </div>
@@ -5789,9 +5905,12 @@
 
     function openHelp() {
       const overlay = document.getElementById('help-overlay');
+      const searchInput = document.getElementById('help-search-input');
+      if (searchInput) searchInput.value = '';
       overlay.style.display = 'flex';
       document.body.classList.add('help-open');
       document.body.style.overflow = 'hidden';
+      filterHelp();
     }
 
     function closeHelp(e) {
@@ -5800,6 +5919,46 @@
       overlay.style.display = 'none';
       document.body.classList.remove('help-open');
       document.body.style.overflow = '';
+    }
+
+    function filterHelp() {
+      const input = document.getElementById('help-search-input');
+      const body = document.querySelector('#help-overlay .help-body');
+      const empty = document.getElementById('help-empty');
+      if (!input || !body) return;
+
+      const query = input.value.trim().toLowerCase();
+      const sections = Array.from(body.querySelectorAll('.help-section'));
+      let visibleCount = 0;
+
+      sections.forEach(section => {
+        const rows = Array.from(section.querySelectorAll('.key-row'));
+        if (!query) {
+          section.style.display = '';
+          rows.forEach(row => row.style.display = '');
+          visibleCount += 1;
+          return;
+        }
+
+        const sectionText = Array.from(section.children)
+          .filter(child => !child.classList.contains('key-grid'))
+          .map(child => child.textContent)
+          .join(' ')
+          .toLowerCase();
+        const sectionMatches = sectionText.includes(query);
+        let rowMatches = 0;
+        rows.forEach(row => {
+          const matches = row.textContent.toLowerCase().includes(query);
+          row.style.display = (sectionMatches || matches) ? '' : 'none';
+          if (matches) rowMatches += 1;
+        });
+
+        const showSection = sectionMatches || rowMatches > 0;
+        section.style.display = showSection ? '' : 'none';
+        if (showSection) visibleCount += 1;
+      });
+
+      if (empty) empty.style.display = visibleCount ? 'none' : 'block';
     }
 
     document.addEventListener('keydown', function(e) {
@@ -5813,7 +5972,7 @@
         const savesOverlay = document.getElementById('saves-overlay');
         const passOverlay  = document.getElementById('pass-overlay');
         if (helpOverlay.style.display === 'flex') {
-          helpOverlay.style.display = 'none'; document.body.style.overflow = '';
+          closeHelp();
         } else if (savesOverlay.style.display === 'flex') {
           savesOverlay.style.display = 'none'; document.body.style.overflow = '';
         } else if (passOverlay.style.display === 'flex') {
@@ -6131,7 +6290,7 @@
       return item.type === 'folder' ? folderAddedToParentTime(item.item) : saveCreatedTime(item.item);
     }
 
-    function sortTopLevelItems(folders, saves) {
+    function sortTopLevelItems(folders, saves, allFolders = getFolders(), allSaves = getSaves()) {
       const mode = getFolderSortMode();
       return [
         ...folders.map(item => ({ type: 'folder', item })),
@@ -6142,8 +6301,8 @@
         if (mode === 'created-asc') return (itemCreatedTime(a) - itemCreatedTime(b)) || nameCompare;
         if (mode === 'created-desc') return (itemCreatedTime(b) - itemCreatedTime(a)) || nameCompare;
 
-        const aUpdated = a.type === 'folder' ? (Number(a.item.updatedAt) || itemCreatedTime(a)) : saveUpdatedTime(a.item);
-        const bUpdated = b.type === 'folder' ? (Number(b.item.updatedAt) || itemCreatedTime(b)) : saveUpdatedTime(b.item);
+        const aUpdated = a.type === 'folder' ? folderNestedActivityTime(a.item, allFolders, allSaves) : saveActivityTime(a.item);
+        const bUpdated = b.type === 'folder' ? folderNestedActivityTime(b.item, allFolders, allSaves) : saveActivityTime(b.item);
         return (bUpdated - aUpdated) || (itemCreatedTime(b) - itemCreatedTime(a)) || nameCompare;
       });
     }
@@ -6312,6 +6471,7 @@
       if (!s) return;
       saves[idx] = { ...s, lastLoadedAt: Date.now() };
       putSaves(saves);
+      touchFolders([s.folderId]);
       document.getElementById('rows-container').innerHTML = '';
       rowCount = 0;
       s.rows.forEach(r => addRow(r.name, r.weight, r.grade));
@@ -6844,7 +7004,7 @@
       let html = '';
       const topFolders = getChildFolders(folders, null);
       const unfoldered = saves.filter(s => !s.folderId);
-      html += sortTopLevelItems(topFolders, unfoldered).map(entry =>
+      html += sortTopLevelItems(topFolders, unfoldered, folders, saves).map(entry =>
         entry.type === 'folder' ? renderFolderBlock(entry.item, saves, folders, 0) : renderSaveItem(entry.item)
       ).join('');
 
@@ -6940,16 +7100,18 @@
       let dragging = false;
       let pointerId = null;
       let placeholder = null;
+      let lastY = 0;
 
       function getWrapperIndex(el) {
         return Array.from(container.querySelectorAll('.row-swipe-wrapper')).indexOf(el);
       }
 
-      function getDragAfterElement(y) {
+      function getDragAfterElement(y, direction) {
         const wrappers = Array.from(container.querySelectorAll('.row-swipe-wrapper:not(.row-dragging):not(.row-drag-placeholder)'));
         return wrappers.reduce((closest, child) => {
           const box = child.getBoundingClientRect();
-          const offset = y - box.top - box.height / 2;
+          const switchPoint = direction >= 0 ? box.top + box.height * 0.3 : box.top + box.height * 0.7;
+          const offset = y - switchPoint;
           if (offset < 0 && offset > closest.offset) {
             return { offset, element: child };
           }
@@ -6983,7 +7145,9 @@
 
         e.preventDefault();
         wrapperEl.style.top = `${e.clientY - grabOffsetY}px`;
-        const after = getDragAfterElement(e.clientY);
+        const direction = e.clientY === lastY ? e.clientY - startY : e.clientY - lastY;
+        const after = getDragAfterElement(e.clientY, direction);
+        lastY = e.clientY;
         if (after == null) {
           container.appendChild(placeholder);
         } else {
@@ -7034,6 +7198,7 @@
         e.stopPropagation();
         pointerId = e.pointerId;
         startY = e.clientY;
+        lastY = e.clientY;
         startIndex = getWrapperIndex(wrapperEl);
         const rect = wrapperEl.getBoundingClientRect();
         grabOffsetY = e.clientY - rect.top;
@@ -8040,7 +8205,7 @@ www.coursegradecalculator.com`;
     const NAME_PLACEHOLDERS = [
       'e.g. Midterm Exam', 'e.g. Homework', 'e.g. Final Exam',
       'e.g. Lab Report', 'e.g. Quiz 1', 'e.g. Research Paper',
-      'e.g. Participation', 'e.g. Project', 'e.g. Weekly Assignment'
+      'e.g. Participation', 'e.g. Project'
     ];
     let _placeholderIdx = 0;
     function getNamePlaceholder() {
