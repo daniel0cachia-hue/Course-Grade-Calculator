@@ -6948,12 +6948,14 @@
       const nameEl = document.getElementById('folder-delete-name');
       const detailEl = document.getElementById('folder-delete-detail');
       const counts = getFolderDeleteCounts(folderId);
+      if (!counts.saveCount && !counts.folderCount) {
+        deleteFolder(folderId);
+        return;
+      }
       pendingDeleteFolderId = folderId;
       if (nameEl) nameEl.textContent = folder.name || 'this folder';
       if (detailEl) {
-        detailEl.textContent = (counts.saveCount || counts.folderCount)
-          ? `This folder currently contains ${pluralize(counts.saveCount, 'course')} and ${pluralize(counts.folderCount, 'nested folder')}.`
-          : 'This folder is currently empty.';
+        detailEl.textContent = `This folder currently contains ${pluralize(counts.saveCount, 'course')} and ${pluralize(counts.folderCount, 'nested folder')}.`;
       }
       if (overlay) overlay.style.display = 'flex';
     }
