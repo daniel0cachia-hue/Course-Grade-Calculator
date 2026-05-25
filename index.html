@@ -1240,6 +1240,130 @@
       gap: 12px;
     }
 
+    #folder-delete-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 1300;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 18px;
+      background: rgba(0,0,0,0.48);
+      backdrop-filter: blur(3px);
+      animation: overlayIn 0.18s ease;
+    }
+
+    .folder-delete-modal {
+      width: 100%;
+      max-width: 500px;
+      overflow: hidden;
+      border: 2px solid var(--border);
+      border-radius: 20px;
+      background: var(--surface);
+      box-shadow: 0 20px 48px rgba(0,0,0,0.24);
+      animation: modalIn 0.18s ease;
+    }
+
+    .folder-delete-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 22px 24px 18px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .folder-delete-header h2 {
+      margin: 0;
+      color: var(--text);
+      font-family: var(--font-ui);
+      font-size: 1.65rem;
+      line-height: 1.05;
+      letter-spacing: -0.02em;
+    }
+
+    .folder-delete-body {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      padding: 20px 24px 24px;
+    }
+
+    .folder-delete-message {
+      margin: 0;
+      color: var(--text-muted);
+      font-family: var(--font-ui);
+      font-size: 1rem;
+      line-height: 1.45;
+    }
+
+    .folder-delete-name {
+      color: var(--accent);
+      font-weight: 800;
+      overflow-wrap: anywhere;
+    }
+
+    .folder-delete-detail {
+      margin: 0;
+      color: var(--text-muted);
+      font-family: var(--font-ui);
+      font-size: 0.92rem;
+      line-height: 1.4;
+    }
+
+    .folder-delete-actions {
+      display: grid;
+      gap: 10px;
+      margin-top: 4px;
+    }
+
+    .folder-delete-choice {
+      min-height: 54px;
+      border: 2px solid var(--border);
+      border-radius: 14px;
+      background: var(--surface);
+      color: var(--text);
+      font-family: var(--font-ui);
+      font-size: 1rem;
+      font-weight: 800;
+      cursor: pointer;
+      transition: border-color 0.16s ease, background-color 0.16s ease, color 0.16s ease, box-shadow 0.16s ease;
+    }
+
+    .folder-delete-choice:hover,
+    .folder-delete-choice:focus-visible {
+      border-color: var(--accent);
+      background: var(--accent-dim);
+      color: var(--accent);
+      outline: none;
+      box-shadow: 0 0 0 3px var(--accent-dim);
+    }
+
+    .folder-delete-choice.danger:hover,
+    .folder-delete-choice.danger:focus-visible {
+      border-color: #ff2a55;
+      background: rgba(255,42,85,0.12);
+      color: #ff2a55;
+      box-shadow: 0 0 0 3px rgba(255,42,85,0.16);
+    }
+
+    .folder-delete-cancel {
+      min-height: 48px;
+      border: 0;
+      background: transparent;
+      color: var(--text-muted);
+      font-family: var(--font-ui);
+      font-size: 0.96rem;
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    .folder-delete-cancel:hover,
+    .folder-delete-cancel:focus-visible {
+      color: var(--text);
+      outline: none;
+    }
+
     .saves-body.mode-save #saves-browse-tools,
     .saves-body.mode-save #saves-list {
       display: none !important;
@@ -5748,6 +5872,25 @@
     </div>
   </div>
 
+  <!-- Folder Delete Choice Modal -->
+  <div id="folder-delete-overlay" style="display:none;" onclick="closeFolderDeletePrompt(event)">
+    <div class="folder-delete-modal" role="dialog" aria-modal="true" aria-labelledby="folder-delete-title">
+      <div class="folder-delete-header">
+        <h2 id="folder-delete-title">Delete Folder?</h2>
+        <button class="help-close" onclick="closeFolderDeletePrompt()" aria-label="Close folder delete options"><svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="m4.5 4.5 7 7M11.5 4.5l-7 7" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg></button>
+      </div>
+      <div class="folder-delete-body">
+        <p class="folder-delete-message">Choose what should happen to <span class="folder-delete-name" id="folder-delete-name">this folder</span>.</p>
+        <p class="folder-delete-detail" id="folder-delete-detail"></p>
+        <div class="folder-delete-actions">
+          <button class="folder-delete-choice" onclick="confirmFolderDelete(false)">Delete Folder Only</button>
+          <button class="folder-delete-choice danger" onclick="confirmFolderDelete(true)">Delete Folder and Contents</button>
+          <button class="folder-delete-cancel" onclick="closeFolderDeletePrompt()">Cancel</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- Help Modal -->
   <div id="help-overlay" style="display:none;" onclick="closeHelp(event)">
     <div class="help-modal" role="dialog" aria-modal="true" aria-labelledby="help-title">
@@ -5903,7 +6046,7 @@
             </div>
             <div class="key-row">
               <div class="keys icon-key"><svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="m4.5 4.5 7 7M11.5 4.5l-7 7" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg></div>
-              <div class="key-desc">Deletes the folder only. Courses inside are moved back to the unorganised list, not deleted.</div>
+              <div class="key-desc">Opens a delete choice: delete only the folder and move its contents up one level, or delete the folder and everything inside it.</div>
             </div>
           </div>
         </section>
@@ -5931,6 +6074,7 @@
     const ICON_TRASH_SVG = `<svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M3.2 4.5h9.6M6.3 4.5V3.2h3.4v1.3M5 6.4l.4 6.4h5.2l.4-6.4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
 
     let helpLastScrollTop = 0;
+    let pendingDeleteFolderId = null;
 
     function setHelpSearchVisible(isVisible) {
       const searchWrap = document.querySelector('#help-overlay .help-search-wrap');
@@ -6039,7 +6183,10 @@
         const helpOverlay  = document.getElementById('help-overlay');
         const savesOverlay = document.getElementById('saves-overlay');
         const passOverlay  = document.getElementById('pass-overlay');
-        if (helpOverlay.style.display === 'flex') {
+        const folderDeleteOverlay = document.getElementById('folder-delete-overlay');
+        if (folderDeleteOverlay.style.display === 'flex') {
+          closeFolderDeletePrompt();
+        } else if (helpOverlay.style.display === 'flex') {
           closeHelp();
         } else if (savesOverlay.style.display === 'flex') {
           savesOverlay.style.display = 'none'; document.body.style.overflow = '';
@@ -6765,11 +6912,84 @@
       document.getElementById('inline-folder-name').value = '';
     }
 
-    function deleteFolder(folderId) {
+    function getFolderDescendantIds(folderId, folders = getFolders()) {
+      const descendants = [];
+      const stack = [folderId];
+      while (stack.length) {
+        const parent = stack.pop();
+        folders.forEach(f => {
+          if (f.parentFolderId === parent) {
+            descendants.push(f.id);
+            stack.push(f.id);
+          }
+        });
+      }
+      return descendants;
+    }
+
+    function getFolderDeleteCounts(folderId) {
+      const folders = getFolders();
+      const folderIds = new Set([folderId, ...getFolderDescendantIds(folderId, folders)]);
+      const saves = getSaves();
+      return {
+        folderCount: folderIds.size - 1,
+        saveCount: saves.filter(s => folderIds.has(s.folderId)).length
+      };
+    }
+
+    function pluralize(count, singular, plural = `${singular}s`) {
+      return `${count} ${count === 1 ? singular : plural}`;
+    }
+
+    function requestDeleteFolder(folderId) {
+      const folder = getFolders().find(f => f.id === folderId);
+      if (!folder) return;
+      const overlay = document.getElementById('folder-delete-overlay');
+      const nameEl = document.getElementById('folder-delete-name');
+      const detailEl = document.getElementById('folder-delete-detail');
+      const counts = getFolderDeleteCounts(folderId);
+      pendingDeleteFolderId = folderId;
+      if (nameEl) nameEl.textContent = folder.name || 'this folder';
+      if (detailEl) {
+        detailEl.textContent = (counts.saveCount || counts.folderCount)
+          ? `This folder currently contains ${pluralize(counts.saveCount, 'course')} and ${pluralize(counts.folderCount, 'nested folder')}.`
+          : 'This folder is currently empty.';
+      }
+      if (overlay) overlay.style.display = 'flex';
+    }
+
+    function closeFolderDeletePrompt(e) {
+      if (e && e.target !== document.getElementById('folder-delete-overlay')) return;
+      const overlay = document.getElementById('folder-delete-overlay');
+      if (overlay) overlay.style.display = 'none';
+      pendingDeleteFolderId = null;
+    }
+
+    function confirmFolderDelete(deleteContents) {
+      if (!pendingDeleteFolderId) return;
+      const folderId = pendingDeleteFolderId;
+      pendingDeleteFolderId = null;
+      const overlay = document.getElementById('folder-delete-overlay');
+      if (overlay) overlay.style.display = 'none';
+      deleteFolder(folderId, deleteContents);
+    }
+
+    function deleteFolder(folderId, deleteContents = false) {
       const saves = getSaves();
       const folders = getFolders();
       const folder = folders.find(f => f.id === folderId);
       const parentId = folder ? folder.parentFolderId : null;
+
+      if (deleteContents) {
+        const folderIds = new Set([folderId, ...getFolderDescendantIds(folderId, folders)]);
+        const deletedSaves = saves.filter(s => folderIds.has(s.folderId));
+        putSaves(saves.filter(s => !folderIds.has(s.folderId)));
+        putFolders(touchFolderIds([parentId], folders.filter(f => !folderIds.has(f.id))));
+        if (deletedSaves.some(s => s.id === activeClassId)) clearActiveClass();
+        renderSavesList();
+        populateFolderSelect();
+        return;
+      }
 
       // Move saves in this folder up to parent (or top level)
       saves.forEach(s => { if (s.folderId === folderId) s.folderId = parentId; });
@@ -6954,7 +7174,7 @@
           <div class="folder-actions" onclick="event.stopPropagation()">
             <button class="btn-folder-action" title="Move folder" onclick="toggleMoveFolderDropdown('${f.id}',this)">${ICON_MOVE_SVG}</button>
             <button class="btn-folder-action" title="Rename folder" onclick="startRenameFolder('${f.id}')">${ICON_RENAME_SVG}</button>
-            <button class="btn-folder-action danger" title="Delete folder" onclick="deleteFolder('${f.id}')">${ICON_CLOSE_SVG}</button>
+            <button class="btn-folder-action danger" title="Delete folder" onclick="requestDeleteFolder('${f.id}')">${ICON_CLOSE_SVG}</button>
           </div>
         </div>
         <div class="folder-contents">
@@ -7048,7 +7268,7 @@
               <div class="folder-actions" onclick="event.stopPropagation()">
                 <button class="btn-folder-action" title="Move folder" onclick="toggleMoveFolderDropdown('${f.id}',this)">${ICON_MOVE_SVG}</button>
                 <button class="btn-folder-action" title="Rename folder" onclick="startRenameFolder('${f.id}')">${ICON_RENAME_SVG}</button>
-                <button class="btn-folder-action danger" title="Delete folder" onclick="deleteFolder('${f.id}')">${ICON_CLOSE_SVG}</button>
+                <button class="btn-folder-action danger" title="Delete folder" onclick="requestDeleteFolder('${f.id}')">${ICON_CLOSE_SVG}</button>
               </div>
             </div>
             <div class="folder-contents">${childHtml || '<div class="folder-empty">Empty folder</div>'}</div>
